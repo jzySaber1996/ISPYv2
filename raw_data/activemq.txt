@@ -1,0 +1,633 @@
+﻿title=Add Postgres Support
+expected=The JDBC Message Store should support Postgresql
+class=1
+
+title=JDBC support for Firebird database
+current=Support does not exist for the Firebird database.
+example=Information can be found at [URL] and the JDBC mailing list is at [URL]
+expected=It shouldn't be difficult, Firebird is an open enterprise level database, so it should have all the features you require.
+class=1
+
+title=Allow JDBC persistence adapter to use custom prefixes
+expected=It would be nice to support configurable prefix for these tables, so that multiple standalone brokers can use a single database.
+current=Currently table names are hardcoded in [FILE]
+class=1
+
+title=create a security plugin using the Acegi framework
+example=[URL]
+class=1
+
+title=Outbound Resource Adapter
+expected=Create a JCA Outbound Resource Adapter (RAR)
+class=1
+
+title=Allow a client to choose if non transacted persistent message should use sync or async send.
+expected=I propose that we add a ConnectionFactory property that controls if non-transacted persistent messages use async sends to the broker.
+current=ActiveMQ currently sends all messages to the broker using an async send. 
+explanation=This allows the client send() method call to be very fast since it does not have to wait for the message to arrive at the server.
+drawback=Unfortunately, most folks will assume that the send() method should block when sending a non-transacted persistent message.
+expected=They will expect the send to work like JDBC operation using auto-commit.
+class=1
+
+title=Automatic periodic cleanup of the JDBC database
+expected=Add a periodic cleanup of the database.
+explanation= It removes expired messages and messages that been acked by all durable subscribers.
+class=1
+
+title=Add MessageConsumer stop and start methods.
+expected=Allow a message consumer to have a start or stop cycle.
+explanation=When stopped, messages are not delivered to the consumer until the consumer is started.
+explanation=Similar to how a the connection start or stop methods work except at individual consumer level.
+class=1
+
+title=suppport jmDNS (Zeroconf for Java) as a way to discover brokers
+expected=We should provide a plugin to allow easy location of brokers using jmDNS
+explanation=Zeroconf (Apple Rendezvous) is a standard protocol for discovering services on a network using multicast. 
+class=1
+
+title=allow JMS [METHOD] to be asynchronous and not block the client
+expected=In very high throughput scenarios, like market data, we may wish the JMS send() message to succeed and add the message to an internal RAM channel for dispatching down a socket at a later date, to boost the performance throughput.
+class=1
+
+title=Make a custom JNDI Context to allow destinations to be browsed
+expected=We can make Destinations available for browsing by tools like Hermes using a simple JNDI Context
+class=1
+
+title=let producer example sleep between publishing messages
+expected=You can now provide a -DsleepTime=xxx for the producer.
+explanation=This will cause the producer to sleep xxx ms between publishing messages.
+class=1
+
+title=provide shell script to run ActiveMQ from the command line from a binary distro
+expected=being able to type activemq from the command line, assuming your PATH was correct etc would be cool
+class=1
+
+title=support for composite Destinations
+explanation=We would also need to watch for this in Queue based dispatching such as how we do wildcard queue dispatching
+expected=When subscribing to, say, your stock portfolio on a topic it would be much better to subscribe to a single destination "Code"
+current=Rather than having 3 separate subscriptions
+benefit=From the JMS Providers perspective this is much cheaper too!
+benefit=Also on the publishing side of things, if we publish to a composite queue it could provide fine grained control over different queues as an alternative to durable topics.
+benefit=so folks can explicitly browse the queues, can delete any item in the queue, can have many consumers per queue etc.
+class=1
+
+title=Pooling JMS ConnectionFactory
+expected=Add a pooling JMS ConnectionFactory which will use a single physical JMS Connection under the covers and use a pool of sessions to avoid creating too many physical JMS resources when using the Spring JmsTemplate or EJBs.
+class=1
+
+title=support advisory messages for start/stop of consumers and producers
+expected=We should generate some advisory messages when a consumer/producer start/stop so that JMS clients can monitor & see who's subscribing to what etc.
+class=1
+
+title=XA support
+expected=We need an XA connection implementation
+class=1
+
+title=Optimise the subscription dispatching, particularly the topic hierarchy
+expected=Optimise the subscription dispatching, particularly the topic hierarchy and wildcards
+benefit=Also any selector tuning would be cool
+class=1
+
+title=Need a remote protocol for embedded brokers
+expected=However, for brokers that are remote, where multicast discovery is not possible and where outbound connections are the only option, a new type of network connection is required that proivdes full multiplex message transfer from the remote location
+current=Typical Network connections for ActiveMQ are uniplexed - fully connectivity being established between brokers by both brokers connecting to one another.
+drawback=For brokers on the same network, this is trivial, as discovery automates the process.
+explanation=In addition, the protocol should be based on the peer:// protocol, enabling a JMS client to create an embedded broker automatically, that uses remote network connections.
+benefit=This enables the client to publish messages, even if the transport has diconnected.
+class=1
+
+title=use Derby as our default, integrated, JDBC persistence engine in the release?
+expected=Maybe by default we should use Derby as the default JDBC persistence, particularly as it supports full XA.
+explanation=Then our out of the box persistence could be a combination of Derby and the Journal?
+class=1
+
+title=Support demand based publishing
+expected=Create a demand advisor that lets a publisher know when there is demand of the messages it can produce.
+benefit=Useful when creating the messages to be published is an expensive operation.
+class=1
+
+title=Add Sybase support
+expected=The JDBC Message Store should support Sybase
+class=1
+
+title=Tool to display the raw message content of messages currently queued
+explanation=The raw content of messages in the queue can give a great deal of information about failing clients. 
+expected= A tool to actively inspect such things would be very handy - exposed as part of the jmx info would be fine.
+class=1
+
+title=add option to message groups to configure frequency of forcing a new consumer
+useless=This is a just a suggested feature, 
+example=see this discussion for more details [URL]
+expected=The basic idea was to allow configuring a frequency (either elapsed time or message count) to force a new consumer for a given message group (similar to setting JMSXGroupSeq header to ?)
+benefit=Would help distribute the load across consumers to better protect against slow consumers, etc.
+class=1
+
+title=GBeans Should allow configuration of store location
+current=ActiveMQ is placing its data store in the current directory - given Geronimo can be started from anywhere this is not a good idea.
+expected=Instead the user should be able to configure the location of the store and this should be resolved relative to the root directory obtained from ServerInfo That defaults to var/activemq.
+example=See: [URL]
+class=1
+
+title=Allow to "reschedule" messages
+expected=However we need to be able to "reschedule" the message. 
+expected=So we would like to be able to remove or change the delay after adding the message to the queue.
+explanation=We use the new delay or scheduling feature which comes with activemq 5.4.0.
+benefit=This is really cool and works out well.
+class=1
+
+title=Allow ssl context configuration through spring or xbean
+expected= It would be better if it was possible to configure via spring or xbean.
+explanation=amq ssl works with the [CODE] system properties and can be configured via SslBroker without the system properties as shown in (web-page-link)
+class=1
+
+title=JMS 2.0 Support
+expected=Expand the broker support to include JMS 2.0.
+benefit=The biggest impacts are going to be the client side changes to support the simplified API (It looks like "web-page-link" covers that), and the ability to share subscriptions across multiple clients.
+class=1
+
+title=Exposing Session Count on the broker
+expected=We thought it would be better if we can see the session count on broker in some way where we can expose that in our metrics tool if this property gets exposed as a mbean.
+explanation=Currently , The broker metrics are good to get the connection count and other metrics.
+current=Recently , we had an issue with the high number of sessions due to the issue in the client code in connecting to broker.
+class=1
+
+title=Better Fault Tolerance
+current=Other queue technologies provide a manner of fault tolerance missing from AMQ message semantics.
+explanation=That is, messages can be acknowledged at any time by a client.
+drawback=Failing to do so within the messages TTL, should result in the message re-appearing on the queue so another client can re-try it.
+explanation=Reliable messaging with AMQ currently pertains to only message receipt, but in practical systems distributing work via a queue this is unsufficient semantics to ensure tolerance of faults "during" work processing.
+drawback=In that case, clients will only acknowledge a message in the event of successful processing of that message (left to the client to decide).
+drawback=If the client were to suffer a fatality during processing, the work associated with the message is left undone in the current AMQ because it cannot be re-processed.
+drawback= In these extreme (but not uncommon) fault conditions, it is not possible for the client to "re-queue" the message.
+expected=Combining TTL, re-queue behavior (in the Broker) and INDIVIDUAL_ACKNOWLEDGE (on the client) of messages should achieve the desired increase in fault-tolerance described here.
+class=1
+
+title=support AIO (or AIO4J)
+explanation=IBM's implemented AIO4J with is a reference implementation of AIO for true asynchronous IO. 
+expected=We should support this ASAP!
+current=So far outbound is working in the modules/aio4j module but we've yet to support inbound.
+explanation=We have done the WireFormat refactorings so it should be pretty easy to implement this now.
+class=1
+
+title=Time out for Durable Subscribers
+expected=I propose to have an enhanced version of the createDurableSubscriber method accepting an addtional parameter with a timeout value.
+explanation=This feature comes from practical considerations.
+explanation=Imagine consumers that create durable subscribers on a broker.
+explanation= If those consumers die unexpectedly and are not revived, the durable subscription continues to exist and messages sent to the according topic will be stored persistently.
+explanation=The intended behavior on the broker side is to drop a durable subscription if no active subscriber has been connected within the given timeout value. 
+explanation=By default the feature should be turned off.
+class=1
+
+title=Allow the timer to be configured (and disabled) for the async clear down of durable topic messages
+benefit=So Retroactive Consumers can receive all messages ever sent on a durable topic
+class=1
+
+title=Keep-alive for ReliableTransportChannel
+explanation=A thread which periodically checks if the channels are alive by sending a special packet which must be acknowledged within a specified timeframe.
+drawback=If not, the channel will be disconnected and the standard ReliableTransportChannel will reestablish the channel.
+class=1
+
+title=Add request-id and response-id headers to STOMP connect/connected handshake
+expected=For the new activemq-cpp library, we need to extend the STOMP connect/connected handshake so that we get back a response-id for our response correlator.
+explanation=To do this, we need to send something in the connect request that contains a client-defined request-id.
+explanation=My first thought was to just reuse the message-id header, but that is typically reserved for cases when a client is expecting to acknowledge a message. 
+expected=So rather than risk breaking that paradigm, I propose a new header "request-id" that is just used on the connect message.
+explanation=When the broker receives a connect request with a request-id header, it creates a connected response with a response-id set to the request-id of the original request.
+explanation=This way the client can treat the handshake as a true request/response.
+class=1
+
+title=BufferedTransportFilter or similar feature
+expected=I'm considering using ActiveMQ for an app that would transfer a large number of messages over the http transport (across firewalls/internet).
+expected= I would want to use async messages (i.e. useAsyncSend=true) to boost performance.
+expected=Would it make sense to introduce a BufferedTransportFilter to boost performance even further(considering the fact that these messages would be traveling over the internet)?
+explanation=That is, the BufferedTransportFilter would wait a configurable amount of time before "batching together" all the messages it received so far (or after some configurable limit in terms of bytes and/or number of messages) and then pass this on to the next Transport.
+explanation=Ideally, the Transport API would have to be extended to allow for a onewayBatch(List<Object> messageBatch) method (and the default implementation would just iterate over the list and rely on the existing oneway(Object) method. 
+benefit=HttpClientTransport could then be extended to allow for a single POST to send multiple messages over the internet.
+useless=Is this something that was considered?
+useless= Or that exists in some other form that I missed while going through the sources?
+useless=I would be willing to contribute some time for implementing this if the maintainers think its a worthwhile feature to have.
+useless=Thanks,
+useless=Hernan
+class=1
+
+title=add tcp keepalive, linger, tcpnodelay/disable nagle support to stomp protocol
+expected=Please add TCP_NODELAY, TCP_KEEPCNT, TCP_KEEPIDLE, TCP_KEEPINTVL, and SO_LINGER to the stomp transport.
+example=See "man -s 7 tcp" on linux.
+benefit=These options help ActiveMQ recognize disappeared connections outside of the application layer.
+explanation=TCP_NODELAY is a performance option for small messages.
+class=1
+
+
+title=Implement JSR 356 based WebSocket transport
+current=The present WS transport boots up an embedded Jetty instance on its own port, which does not make sense when embedding ActiveMQ in a container-hosted application.
+expected=Although not that difficult to hack together manually, there should be a supported first-party mechanism to configure a WS Stomp/MQTT endpoint when embedded in a JSR 356 compatible container.
+class=1
+
+title=Support Time To Live for activemq connection that uses tcp and nio transport
+expected=Add a new connection string parameter to support a time to live (expiry time) for activemq connection
+class=1
+
+title=Support AMQP 0.9.1
+current=ActiveMQ seems to only support AMQP 1.0 which does not have very broad adoption.
+example=For example, it is difficult to find a AMQP 1.0 client library for python.
+class=1
+
+title=SpringIDE extension plugin for configuration namespace
+explanation=This description is based on a response to a post on the Spring forums by cdupuis (see "web-page-link")
+explanation=Out of the box Spring IDE only knows about NamespaceHandlers that are part of the Spring Portfolio.
+explanation=Therefore Spring IDE is not able to validate the Bean Reference to a bean that would be generated by a NamespaceHandler at runtime, but not known in Spring IDE's runtime environment. 
+explanation=This also means that amq namespace elements don't appear in the Spring or Project Explorer.
+explanation=Because Spring IDE lives in the OSGi environment of your Eclipse instance it can't take any of your project's jar files and look for NamespaceHandlers.
+example=Spring IDE can "learn" about any namespace by adding suppport for custom namespaces, see [URL]
+class=1
+
+title=Support cometd as a protocol
+expected=I'm not sure if cometd maps to JMS well but it would be very interesting to suppport cometd as a protocol along with stomp, xmpp, rest, etc.
+explanation=I know websockets are being worked on for 5.4 and this would be awesome to add.
+explanation=I'm aware of the existing servlet that ships with activemq and with the more recent demo code using jetty that is hosted over at fuse but it would be nicer to see this rolled into the broker as a first class citizen.
+explanation=I'm opening this to see if there is any traction for this and, in the off chance that I have time, I might look into trying my hand at this.
+class=1
+
+title=Request/Response Option for AJAX interface
+expected=In addition to the standard publish/subscribe message handling used by the AJAX client to communicate to ActiveMQ, it would be helpful in some situations to be able to simulate a more typical request/response scenario.
+explanation=Is it performant to do this using the existing API or is there a need to develop new Javascript classes to support it?
+example=For example, one approach may be to create a new topic and message consumer in the JS client.
+explanation=Attach the consumer and send the message.
+explanation=When the response is received, the callback is notified and the consumer is discarded.
+drawback=It seems that this approach may work, but it appears very inefficient due to the number of objects created/disposed.
+class=1
+
+title=allow topics in particular but also queues to have a 'namespace URI' like WS-Notification
+benefit=This would allow a real clean mapping from WS-N topics and ActiveMQ at the protocol level.
+explanation=We could use the namespace as a level of indirection to map to a broker, a cluster of brokers or even a particular area of a network etc. 
+explanation=The namespace could be a broker's name too.
+class=1
+
+title=Axis/JMS/ActiveMQ demo
+explanation=I have created a self-contained demo of using Axis/JMS/ActiveMQ
+explanation=James suggested that I pass it along for possible inclusion in the examples
+explanation=All of the code is in the enclosed ZIP
+useless=Cheers,
+useless=Chris
+class=1
+
+title=message type metadata exposing
+expected=users may wish to see what types of messages are sent on what destinations.
+expected=Similarly we might wanna capture what XSD types are used on each destination to help folks grok the message model used in an organisation
+example=for example, we may wish to collate together all Message.getMessageType() values are used for each Destination.
+class=1
+
+title=message type restrictions on destinations
+expected=Some users may want to restrict certain types (for example, XSD types) of messages to be sent on certain destinations.
+class=1
+
+title=ActiveMQ version 5.7.0 ??
+expected=Can you guys release a 5.6.1 since mKahadb has been fixed in trunk i believe.
+explanation=Given that multi kahadb is broken in version 5.6.0 which was one of the major features in this version, when can we expect ActiveMQ 5.7.0 to be out ??
+example=Please refer [URL]
+useless=Thanks,
+useless=Bhanu
+class=1
+
+title=I have post the jms interface with jni ,C dll and Delphi test.
+useless=I have no time to change.
+useless=Some where is chinese.
+explanation=The interface was used jndi ,so can use in any JMS Server (Perhaps,You have to some change the java code.)
+explanation=I am not wirte the linux C lib. 
+explanation=You can write the makefile yourself.
+useless=Good Luck.
+useless=Sorry
+class=0
+
+title=Options to modify message properties when composite destinations are used
+expected=What about options to be able to change message properties (persistance and others) when they transfer to others destinations ?
+expected=One of our need is to be able to change message properties while we transfer messages through composite destinations. 
+explanation=the same way that with deadLetterStrategy we can add the option processNonPersistent="true" and persist any message
+example=For example, we received messages by MQTT conector, with QoS=0 for performance reasons (no acknowledge, message not persisted).
+class=1
+
+title=Provide startup option to flush journal to store then exit the broker
+expected=This is a wish for a command line argument that will flush the journal to the database and quit.
+benefit=This makes it possible to: Do some kinds of message administration / emergency fixing in SQL.
+benefit=Upgrade even if there are incompatible changes by first flushing the journal and then applying the appropriate SQL change script to the database.
+benefit=Switch the kind of journaling, switch to no journaling, etc.
+useless=Jason
+class=1
+
+title=Cannot configure the load balancing count when using Message Groups
+explanation=We are seeing ActiveMQ configure the first 10 messages with different JMSXGroupID values to the same consuming node before distributing subsequent messages across the attached consumers.
+expected=We need to be able to configure this value down to 1 to allow us to evenly balance the load across the consumers in a round robin fashion.
+current=But we cannot see from the documentation how to configure this property.
+example=For example:
+drawback=This results in an unevenly balanced cluster of consumers when utilising Message Groups.
+class=1
+
+title=Transport Connection to: [URL] failed: [TRACE]
+explanation=Here is a description of the problem: 
+current=Transport Connection to: [URL] failed: [TRACE]
+useless=How should I solve it？
+class=0
+
+title=Unable to apply policy when set refreshInterval=-1 for cachedLDAPAuthorizationMap
+explanation=the LDAP server I used is Active Directory. 
+current=when I try to set [CODE] for [CLASS], I got the following errors:[TRACE]
+class=0
+
+title=SASL PLAIN auth with AMQP doesn't take authzid into account
+current=SASL PLAIN authentication with AMQP doesn't take authzid into account and fails authentication when it's fully legal in SASL PLAIN.
+explanation=See [URL] for a more detailed description including debug logs.
+class=0
+
+title=ActiveMQ truststore client.ts not working
+explanation=We have had our ActiveMQ truststore getting corrupted in our production server last week. 
+explanation=So I replaced the [FILE] file from a backup and imported the app servers .pfx certificates into it. 
+current=Now, customers are unable to establish a connection to ActiveMQ server on 61616, getting SSL errors. 
+explanation=I'm noticing below error in [FIEL].
+explanation=[TRACE]
+current=So I tried creating a new [FILE] file by following below steps from your KB. But the issue persists. 
+current=If I use the [FILE] file on the client machine, I'm able to establish the connection successfully. 
+useless=Could you please help resolve this issue asap? 
+class=0
+
+title=Docker container having ActiveMQ restart making Queues Tab on Console inaccessible
+explanation=In my project we have ActiveMQ 5.14.3 embedded withing docker image.
+current=After initial deployment ActiveMQ Web console work fine, however when I restart container Queues Tab in Web Console throwing JSP exception on [FILE] line 59. 
+current=Hence unable to access queue details from Web Console.
+current=If I delete 'data' folder within container then restart container, Web Console Queue Tab is working fine. 
+drawback=But deleting 'data' folder is not good option as I loose all previous data.
+useless=Can you please help on issue?
+class=0
+
+title=Past Release Downloads Does Not Work
+current=The links for any of the past release downloads don't work, in particular [URL]
+class=0
+
+title=Getting error after some time in ActiveMQ
+useless=Hi Team, 
+explanation=We are using Apache ActiveMQ version 5.14.4 in our one of application. 
+current=We are getting below errors on one of our environment: [TRACE]
+useless=Can you please help us on this, what we can do it to resolve above issue.
+useless=Thanks in adavance
+class=0
+
+title=Number Of Pending Messages Did Not Reflect Its Queues Number
+current=Having issue  on number of pending messages in any queues created as the number did not reflect the total number of message id. 
+explanation=This is usually happen during transaction is heavy to my active mq system.
+useless=Would like to know why this issue occur at the first place?
+useless=Is this similar issue occur before and what are the solution?
+class=0
+
+title=JDBC store - pending high priority messages batch cannot be consumed after low priority message batch
+current=With priority message enabled a batch of low priority messages can leave the cursor unable to load subsequent high priority messages.
+explanation=More visible when [CODE].
+drawback=A new consumer or browse will not be able to see pending messages.
+current=Issue occurs after dispatch of low priority messages, an empty store and the addition of high priority messages.
+class=0
+
+title=[EXCEPTION]: Chunk stream does not exist at page on broker start
+explanation=I am seeing this regularly upon restarts in all versions from 5.4.x - 
+explanation=I cannot downgrade due to breaking issues in previous versions.
+current=The broker was shutdown cleanly with no logged issues.
+explanation=Deleting the activemq-data directory seems to be the only recovery solution (which is not an option in production)
+explanation=[TRACE]
+class=0
+
+title=[FILE] page is saying "Can't find brush for : xml"
+current=[FILE] page is saying "Can't find brush for : xml"
+explanation=[TRACE]
+drawback=So I can't looking into configuration for MQTT.
+class=0
+
+title=activemq-pool - Either adds new mbeans or add/remove pair of mbean for each producer in use
+explanation=On the AMQ dev mailing list we have talked about a new issue [URL].
+current=I found out that using the camel-example-management, which has an embedded AMQ broker and using Camel with the VM transport to produce/consume messages, then there is mbean issues.
+explanation=It works fine in AMQ 5.10.0. 
+explanation=But is wrong in AMQ 5.10.1 and 5.11.0.
+example=See the attached screenshots.
+explanation=Notice how the mbean tree for dynamic producers keeps growing for 5.10.1 and 5.11.0.
+class=0
+
+title=Dispatching large messages over AMQP is very slow.
+current=When testing against the QPid JMS client we see that a producer sending large messages 10mb+ is quite fast but a consumer takes exponentially longer to receive the message.
+class=0
+
+title=Persistent topic messages not stored in store
+current=Even when message sent to topic is persistent and there are non-durable consumers, it is lost when broker fail-over happens in Shared Storage Master/Slave.
+class=0
+
+title=KEYS file does not include A2F9E313 which was used to sign the 5.3.2 release
+current=The KEYS file does not include A2F9E313 which was used to sign the 5.3.2 release.
+current=Furthermore, the key A2F9E313 does not appear to be available from the pgp.mit.edu server.
+drawback=This means that it is impossible to check the integrity of the release.
+class=0
+
+title=HTTPS transportConnector does not create a SslSocket but a plain text one
+current=Trying to enable HTTPS transportConnector in [FILE] file, it is impossible to make it communicate in SSL.
+current=I added the line:[URL] in the [FILE] file, and i can see at startup that a plain text socket seem to have been created, instead of a ssl one: [TRACE]
+current=When i connect with a https client (based on Spring JmsTemplate class), i cannot connect. 
+explanation=I have to mention also that i can successfully connect using ssl connection (so the certificates are OK) and also in HTTP.
+useless=Thanks a lot for your work!
+class=0
+
+title=ActiveMQ is not JCA1.5 compliant
+current=When attempting to install the ActiveMQ RAR, these errors are thrown, and appear to be vaild and correct (verified by browsing the ActiveMQ source code). 
+explanation=Classloading problems appear to prevent using ActiveMQ using the Foriegn JMS facility of Weblogic.
+explanation=[TRACE]
+class=0
+
+title=set findMessageStatement cause problem for JDBCPersistenceAdapter due to error in [FILE]
+current=field [PARAMS] in [FILE] is never used and [METHOD] is using findMessageStatement which causes problem. 
+current=Because if someone overwrite the default findMessageStatement, it will cause [METHOD] to fail.
+class=0
+
+title=NullPointer Exception Occurs when using producer flow control
+current=Looks like there is a synchronization issue still with producer based flow control. 
+explanation=Here is the stack trace of the problem:[TRACE]
+class=0
+
+title=Non temporary destination removing failure
+current=When deleting a non temporary destination and after restarting ActiveMQ the destination is reloaded 
+drawback=so in fact this destination has not been deleted.
+class=0
+
+title=ActiveMQMessageConsumer.unconsumedMessages continues to grow
+explanation=I have written a message producer that is generating messages at a high rate of speed. 
+current=The consumer does process the messages at a slower rate of speed.
+current=I profiled the producer using YourKit and noted that [METHOD] does not ever go down. 
+current=The number of messages sent to the consumer is the same number of messages that are contained in the [METHOD] list. 
+explanation=I have tried many different configurations and have been unsuccessful in getting this problem to go away.
+class=0
+
+title=failover option maxReconnectAttempts is not working.
+explanation=I have only one broker is my environment and I am using the failover url in my client code.
+explanation=The failover url is [URL].
+explanation=I have specified maxReconnectAttempts as 1000 so if my broker is down my client will try atleast 1000 times for reconnect before giving the error.
+current=But as soon as my broker is down, my client exits after trying one time to reconnect.
+expected=My client is supposed to try atleast 1000 times to reconnect.
+class=0
+
+
+title=Inactivity Monitor: org.apache.activemq.transport.InactivityIOException: Channel was inactive for too long
+explanation=From a different poster: I'm programming some kind of messaging program that sends messages in sparse frequency using activeMQ. 
+current=I got exceptions like following and connection between client and activeMQ server is closed. 
+explanation=[TRACE]
+class=0
+
+title=EOFExceptions and Broken Pipe exceptions everywhere in 5.0 (my services seem to run fine under 4.1 and 4.1.1 and somewhat better in 5.1-SNAPSHOT [if you don't count the queue size problem] which is critical)
+current=I keep getting these errors when any of my services startup... 
+explanation=This version doesn't look too stable.
+explanation=[TRACE]
+class=0
+
+title=possible dynamic instability in AMQStore indexes
+current=Due to incorrect assignment of index names - an index physical file can be shared between different durable subscribers - which leads to a dynamic instability of the underlying index - with undefined results.
+class=0
+
+
+title=AMQ Store deletes data files which are in use
+current=The AMQ Store allocates entries in the data logs for commands (including messages/acknowledgements/transaction boundaries etc) - but relies on the reference store for keeping track of data files that are being used. 
+explanation=Updates to the reference store happen at a [METHOD] - asynchronously. 
+current=The problem is that for a fast producer, the current data file (one being written to) can move on past the last known data file to the reference store. 
+current=As the [METHOD] task is a scheduled task - and not coupled to check points - the cleanup task can remove data files that the reference store is not yet aware of AND have are previous to the current data file being written too.
+drawback=This issue can result in errors from the AMQ Store such as:[URL]
+class=0
+
+title=Dead loop on log file reading
+current=We restarted our activemq instance(5.13.4) but found it hung on recovering data. 
+current=I got the data and ran a debug and found these:[TRACE]
+useless=I don't know if this is a problem when the file is saved or there is something need to be fixed when reading.
+class=0
+
+title=Negative queue size (reproducible)
+current=When you "purge" queue from web admin console, it zeroes queue message counter. 
+current=But if you have an active consumer at that time which pre-fetched messages than your consumer will keep sending ack as it process messages from its buffer. 
+current=ActiveMQ will keep decrement counter upon receiving each ack. 
+current=So when consumer is done queue will show MINUS<consumer buffer size>.
+class=0
+
+title=HTTP transport broken in 5.12
+useless=A regression from [URL].
+explanation=Connection watchdog is started for every initiated connection and stopped on WireFormatInfo command. 
+current=HTTP transport doesn't send WireFormatInfo so the watchdog never realises that the connection has been successfully established.
+current=The connection gets terminated every 30 seconds by the watchdog.
+current=At the beginning, everything looks fine, but then you start getting exceptions and start losing packets. 
+current=I haven't seen that myself, but I had people reporting that if HTTP transports are in use, it eventually destabilises the broker and affects non-HTTP transports too.
+explanation=[TRACE]
+class=0
+
+title=Reconnection attempt logic seems wrong in JmsConnector#doInitializeConnection
+current=the reconnection attempts logic based on the reconnection policy seems wrong.
+current=In [CLASS] the loop trying to reconnect to the foreign broker only execute once due to the erroneous test in the while [CODE] should be [CODE].
+class=0
+
+title=Preallocation strategy of zeros can leak file descriptors causing crash
+current=If the preallocationStrategy is set to 'zeros', ActiveMQ can intermittently become unable to allocate direct buffer memory with the default JVM settings. 
+drawback=The exception isn't handled, and ends up both creating an empty journal file and, more importantly, leaking a file descriptor.
+drawback=ActiveMQ eventually runs out of file descriptors and crashes.
+explanation=In addition to handling this condition, perhaps the default ACTIVEMQ_OPTS_MEMORY settings should configure enough direct memory to allow some multiple of log files to be created near simultaneously, or at least this possibility documented in the KahaDB settings.
+explanation=Relevant logs:[TRACE]
+class=0
+
+
+title=Failover transport memory leak on rollback
+explanation=See this description:[URL]
+expected=I'm not sure but maybe the [CLASS] should call [METHOD] instead of [METHOD]
+useless=Cheers, 
+useless=Fabrice
+class=0
+
+title=ActiveMQ corrupted state when local disk fills up and Queues begin to buffer to KahaDB
+useless=There are already issues reporting this in AMQ-3098 and AMQ-5786 but they have been closed as Incomplete, I've left a comment on 5786 but I fear that it may get lost.
+current=Fundamentally KahaDB & ActiveMQ do not survive if Queues start filling up and buffering to KahaDB disk when the disk then becomes full because of an external issue (in our case rsyslog).
+explanation=Because KahaDB does not pre-allocate space, it seems vunerable to this case.
+explanation=I will attach broker logs and Kahadb store during the corrupted state.
+class=0
+
+title=Broker crashes after a few minutes of reading and writing messages
+explanation=I am using a Replicated Level DB setup of ActiveMQ 5.13.1
+current=The cluster starts successfully, however the broker crashes after a few minutes of reading and writing messages.
+explanation=The log contains either one of the following two stack traces:[TRACE]
+class=0
+
+title=Found (and fixed) 3 instances of impossible casts in the activemq code
+current=Running static analysis on activemq I was able to identify 3 instances of impossible casts in the code. 
+explanation=Attaching patch files to fix.
+class=0
+
+title=Unable to config maxThreadPoolSize in broker
+current=The default value of maxThreadPoolSize is Integer.MAX_VALUE in TaskRunnerFactory for broker service, which does not make any sense. 
+expected=If you set [CODE] but you are still able to create as many threads as you want. 
+expected=Suggest to make this configurable to limit the threads number the ActiveMQ broker can create.
+class=0
+
+title=ActiveMQ failed to start with KahaDB reporting corrupt journal records and throwing NegativeArraySizeException
+current=ActiveMQ failed to start up, with the following information:[TRACE]
+class=0
+
+title=VMTransport uses broken double checked locking
+explanation=the [METHOD] method uses the "double checked locking" idiom to avoid the synchronization overhead if the messageQueue has already been instantiated.
+current=however, this idiom is broken unless the reference is marked as volatile.
+class=0
+
+title=allowLinkStealing option is not working when using mqtt over websocket
+current=A first tcp/ip connection is still alive even if a second client with the same clientId connects with allowLinkStealing as true.
+explanation=There is a server log as follows in this scenario.
+explanation=[TRACE]
+explanation=I tested this scenario by using hivemq websocket.
+class=0
+
+title=Cannot use the JDBCIOExceptionHandler when kahadb is configured with lease-database-locker
+current=The JDBCIOExceptionHandler is limited to operating with the JDBCPersistenceAdapter.
+expected=It should be allowed to work in combination with the KahaDBPersistenceAdapter if it's configured to use a LeaseDatabaseLocker as a locker.
+class=1
+
+title=NullPointerException in DemandForwardingBridgeSupport.collectBrokerInfos
+explanation=We have seen the following NPE setting up a demand forwarding bridge [TRACE]
+explanation=This occurred in one of our tests but only under load so seems to be a race condition of some sort.
+class=0
+
+title=AMQP Memory leaks in the AMQP Protocol converter on sender link close
+current=On close of sender links we do not clean up all the mappings for the ConsumerContext instances which leads a build up of context objects in the subscriptions map.
+class=0
+
+title=QueueBrowser hangs when browsing large queues
+current=When trying to browse a queue with a QueueBrowser, the browsing will hang and never complete. 
+explanation=This appears to happen only with "a lot" of message in the queue. 
+explanation=1000 messages works correctly, but 10000 hangs.
+explanation=I have attached a unit test that exhibits the problem. 
+explanation=Change the "messageToSend" variable in the test method to see the difference between small queue size and large queue size.
+explanation=I've attached the unit test code as well as the output from one of the runs with 10000 messages.
+class=0
+
+title=MQTT Transport codec does not properly deal with partial read of frame header
+current=The Codec used to parse MQTT Frames does not properly deal with the case where only part of the initial frame header arrives. 
+explanation=This can happen in NIO+SSL etc where the incoming packet has only the first byte or so of the frame which causes the process header method get stuck in an endless loop.
+class=0
+
+title=Cannot consume messages. Failed to fill batch . cased by NegativeArraySizeException
+current=Consumers cannot consume any message.
+drawback=I had to delete the queue in order to get ActiveMQ to start consuming messages.
+explanation=With the error messages below:[TRACE]
+class=0
+
+title=Queue Messages lost after read timeout on REST API.
+explanation=I have been trying to send/receive messages via a Queue using the REST API. 
+current=While testing I found that some messages got lost after a consuming request times out when no message is available.
+explanation=Here is a transcript of the test case I used:[CODE]
+current=The last wget returns after the given read timeout without any message. 
+current=When looking at the managament console, the message has been consumed.
+explanation=I tested this with 5.8.0 on linux as well as with 5.8.0, 5.9.0 and a freshly built 5.10.0 on windows.
+class=0
+
+title=[METHOD] hangs when amqp+nio is used
+current=The follow test will cause a hang when run against amqp+nio transport.
+explanation=[CODE]
+class=0
+
+
+title=Session.commit() hangs when amqp+nio+ssl is used
+explanation=This is similar to AMQ-5042. 
+explanation=To reproduce run [METHOD] using nio+ssl.
+explanation=(I will add JMSClientNioPlusSslTest shortly)
+class=0
+

@@ -1,0 +1,474 @@
+title=Allow different implementation of transfer mechanism in the DefaultRepositoryProxyConnectors class
+expected=We would like to use a different implementation for transferring an artifact from the remote proxy. 
+explanation=This particular remote proxy we have is not Maven repository. 
+expected=Our transport library handles the bridging work so we would like to use it instead of the default implementation using Wagon.
+expected=Could you make a change in the DefaultRepositoryProxyConnectors so that it can be extendable? 
+expected=We would just want to override the transport method which uses Wagon.
+explanation=Please take a look at the submitted patch.
+useless=Thanks.
+
+
+title=Add description field to the different types of repositories
+expected=When looking over the repositories page it would be useful to have a description for each of the repositories configured. 
+expected=Psonally I need it to be able to describe the owner of the repository and indended purpose.
+
+
+title=ability to use file protocol using UNC path for Managed repository
+current=Currently, if I try to use a network share with a UNC path when creating a Managed Repository, the path is replaced with a newly created directory on the system root. 
+example=For example, using the path of file:/\\path_to_network_share gets changed to file:/C:/path_to_network share. 
+current=I have tried a combination of strings for the url but have not been able to connect to a network share.
+
+
+title=Ability to delete an artifact from the web interface 
+expected=Sometimes when viewing an artifact through the Archiva Web UI, I'd like to delete it from the repository.
+current=Currently the only way to do this by deleting it from the managed repository filesystem.
+
+
+title=Allow uploading multiple artifacts
+explanation=Just a suggestion. 
+drawback=In cases like uploading 10 or more artifacts, it's hassle uploading 1 artifact at a time.
+
+
+title=Add the possibility to schedule retrieve remote indexes when application startup
+expected=When Starting Archiva, it would be nice to retreive all remote indexes that are checked to be used for remote repository before activating the automatic retreive actions.
+expected=Idealy a parameter would be nice to all download on startup.
+
+
+title=downloading (optionnaly) remote index to display remote artifacts in search results
+current=if a managed repo has remote repos, artifacts are available but not display in a search result.
+expected=configure an optionnel remote index url
+expected=running this download in a configurable schedule
+
+
+title=search on artifacts with OSGI Metadatas fields
+expected=Ability to search on some OSGI metadatas symbolic-name, version, export-packages.
+explanation=See improvmenents in maven-indexer MINDEXER-36
+expected=Need an update of maven-indexer.
+
+
+title=monitor repository scanning progress
+current=currently it's hard to tell where a repository scanning task is up to. 
+expected=Even though the percentage completion may not be easy to estimate, we can assess how many files have already been processed.
+
+
+title=Web services for editing a managed repository
+current=Currently, we only have web services for add, delete and retrieve of managed repositories.
+expected=This should also show up in the audit events and audit log report, and must be indicated that it was done remotely.
+
+
+title=Web services for repository merging or artifact promotion
+expected=I think CRUD for managed repositories should be a pre-requisite of this.
+
+
+title=Add support for NPanday artifact types
+explanation=NPanday (<URL>) declares a number of new artifact handlers that Maven can use as extensions to be able to deploy dotNET artifacts into a repository. 
+expected=There should be an Archiva plugin that can recognise these types for path conversion so that they can be uploaded through the web form, and viewed in the artifact information page correctly.
+
+
+title=Proxy should work transparently with either maven 1.x or 2.x repositories.
+explanation=Have the maven-proxy act as either a maven 1.x or maven 2.x repository, depending on which client accesses it. 
+expected=Brett believed this should be managable with aliasing.
+explanation=This was originally posted as a maven-proxy feature at <URL>
+
+
+title=caching repository query interface
+expected=need to be able to query the repository to see if artifacts exist, what versions are available, etc. 
+expected=This needs to interoperate with the indexing, and where applicable should cache information, balancing the need to keep a low memory overhead but avoid repetitive disk reads on metadata files.
+
+
+title=utilise repository relocation information during conversion of an artifact
+expected=we should allow some extra metdata in the m1 pom that can be recognised as relocation information: <CODE>
+explanation=when encountering this, the converted POM and JAR will go to the new location in the m2 repository, and the marker POM (just the relocation information) should go to the old location (and any artifact there should be removed)
+example=This would allow us to move Jakarta commons en mass to the dotted groupId layout for example.
+
+
+title=repository: transitive dependency report
+expected=repository tool to ensure that transitive dependencies will work.
+explanation=we basically need to know that every artifact that is referenced in one POM is actually in the repository along with its POM. 
+expected=We need to know that the dependency relationships among all artifacts in the repository form a closed set. 
+drawback=otherwise the transitive dependency mechanism in m2 will break and we need to be wary of this. 
+expected=eventually i would like to create graphical representations of the dependencies amongst projects but this can come later.
+
+
+title=LDAP Support and Documentation
+expected=It would be very nice to integrate with our corporate LDAP rather than maintain a separate User DB for authentication.
+
+
+title=Add remote repository health check
+explanation=A cron based check of remote repositories (cron value per remote).
+explanation=Option:<LIST>
+
+
+title=using LDAP can be configurable with the ui
+current=currently to use ldap users/admin must edit a configuration file and restart their instance.
+expected=This must be configurable with the ui.
+
+
+title=download artifacts when coming from search results
+explanation=Search is based on maven index. 
+explanation=Users can have results for artifact not here.
+current=So going to artifact info display an empty result.
+expected=We must download artifacts.
+
+
+title=Upload (deploy) artifacts to a repository - via a web form (not using wagon)
+expected=The web interface should allow to upload artifacts to the repository. 
+drawback=For M1 one could just ftp the artifacts as needed but with M2 having to go through the file:deploy plugin is a pain. 
+benefit=Archiva could help a lot here
+
+
+title=ability to have multiple reports
+current=currently the reports are all aggregated into one representation and execution. 
+expected=It should be possible to have separate groups, with just the health ones tied to the indexing and the others run on demand.
+
+
+title=add user management and basic security
+expected=this issue just needs the ability to create and manage users and groups, log in, and restrict access to the administration interface. 
+expected=Further operations may add the need for more security later on.
+
+
+title=web service interface
+explanation=this needs a new jira component.
+expected=We need a comprehensive web services interface to the application. 
+expected=Like RSS, it should be a new view on the same actions. 
+expected=The more we can derive that from the repository-core interfaces, the better.
+expected=This should include administration and security.
+
+
+title=create a second index with a subset of information, and have it compressed
+explanation=required for the eclipse plugin. 
+explanation=Will need to follow up with Jason on exactly what data is required.
+
+
+title=Repository Manager should have a means to remove old snapshot builds
+expected=A nice feature for the MRM to have would be a way to set rules on when older SNAPSHOT builds of the form <CODE> should be removed from the repository. 
+expected=This could either be time based (for example any builds older than a month) or count based (for example keep only the newest 5 builds).
+expected=In addition to the artifact itself, md5 and sha1 files should also be cleaned out.
+
+
+title=Delete more then one Artifact at once
+expected=As suggested by Wendy <URL> I open this issue to keep track on the feature of bulk delete actions on artifacts. 
+expected=As described in <URL>:"Imagine I would like to remove <CODE> and all its children/subprojects (that are referenced as modules in the parent)."
+expected=It would be nice to have form that allow to only specific the package and then delete everything below it.
+
+
+title=Add artifact search box to the default decorator
+expected=Add artifact search box to the default decorator.
+expected=Being able to search from every page highlights the improved search for 1.2 and reduces the amount of clicks to get to the quicksearch page.
+
+
+title=add RSS view to repository manager
+explanation=possibly needs a new component in JIRA. 
+explanation=Items that could have RSS:<LIST>
+
+
+title=add a background task scheduler
+expected=we need to be able to schedule tasks. 
+expected=We should use quartz, and reuse code from Continuum that does similarly.
+expected=There needs to be a way to add/remove/configure scheduled tasks such as indexing, report execution and syncing
+
+
+title=Ability to merge repositories
+expected=Need to be able to merge one repository into another, updating metadata and not overwriting existing artifacts.
+expected=The source repository should remain unchanged.
+expected=It should produce output listing what was merged and what wasn't.
+expected=Additions to the target repo should show in the audit log.
+example=Related thread: <LINK>
+
+
+title=Provide 302 redirect for latest SNAPSHOT
+expected=It would be very useful to have a single link that would always give you the latest snapshot jar, for example: <LINK>
+explanation=Right now this is 404 because there's no file called <FILE>; 
+example=instead, it has a specific jar file with a versioned name, for example <FILE>. 
+benefit=It would be handy if Archiva recognized the URL above and provided a 302 redirect to the current latest deployed snapshot.
+
+
+title=Virtual repositories or repository grouping
+explanation=A number of managed repositories can be grouped together with that group having only one url. 
+expected=So you only need to specify that url in the <FILE> file and when Archiva receives a request via that url, it would look for that artifact from the repositories belonging to that group.
+explanation=More details are dicussed here: <LINK>
+
+
+title=Project Tree view 
+expected=Similar to the Dependency Tree tab, it would be nice to see a Project Tree showing the pom hierarchy (parent-and-modules) with links.
+expected=The data should be available in plain text as well (xml through the xmlrpc interface?)
+
+
+title=Support inclusion of pom file when deploying an artifact via the web upload form
+current=Currently the web upload form only supports pom generation when uploading M2 artifacts.
+
+
+title=Repository purge feature for snapshots
+expected=We need a way to purge a repository of snapshots older than a certain date, (optionally retaining the most recent one) and fixing the metadata.
+
+
+title=complete the proxy interface
+current=the current proxy interface is not well integrated and the tests are failing. 
+expected=Complete this integration.
+
+
+title=Add basic managed repository management support on adding repository, deleting repository, and loading repository by id
+expected=Add basic managed repository management support like adding repository, deleting repository, and loading repository by id.
+explanation=The add repository can take the following parameters:<LIST>
+explanation=deleting and loading a repository can take repository id as parameter.
+
+
+title=Switch for disabling user registration
+expected=It would be nice to have a single switch to disable the registration of arbitrary users, so new users can only be registered by the administrator.
+
+
+title=Adding a find jar by checksum functionality to the REST api
+explanation=In 1.3.x versions, an applet gave us the possibility to know if a jar (on our local disk) was already in the repo, using the checksum files.
+expected=I would like to have this useful functionality back in v2.x,, but through a REST service : I provide a checksum code, and I get the list of artifacts that correspond to this checksum.
+useless=Thanks !
+
+
+title=Show Job Status / Whats going on behind the scenes
+expected=It would be nice to see whats going on in the background, without always looking into the log. 
+explanation=Maybe a Log Viewer or such.
+benefit=When adding a new task like scanning a repo, it would be also nice to get a percentage display or at least to see "ok, currently i am scanning repo X and have X mb downloaded" or such.
+
+
+title=validator: report if artifacts are out of place
+expected=report if artifacts are out of place. 
+explanation=you can tell this because in m2 the POM is packaged with the artifact in <FILE-PATH> so with that information you can assess weather the artifact is in the right location. 
+explanation=this should not happen if tools are being used to deploy but it would be a good check to have.
+
+title=Shutdown of Tomcat causes Exception when running Archiva Project
+current=It looks like the Quartz thread is still running because the web-context has been unloaded before.
+explanation=This could maybe happen because the Quartz threads are not yet under Spring control ([URL]).
+explanation=[TRACE]
+class=bug-1-1066
+
+title=Add proxy connector is broken
+current="id" attribute for "property" tag is no longer available in struts-core 2.1.8.1.
+explanation=In the attached patch, the id attribute was just removed and did not encounter a problem doing so.
+explanation=Also attached a selenium script to add a proxy connector.
+class=bug-2-1475
+
+title=Can't download large archive file due to [EXCEPTION]
+current=I tried to download a large archive(3GB,3,275,052,860 bytes to be precise) that I uploaded to Apache Archiva 1.3.6 using Eclispe Aether API and attempt to download it failed.
+current=Note: I was able to upload and download 1GB file fine.
+explanation=So it may seems that there is probably an attempt to convert a Long value (3,275,052,860) to an Integer value in the code below that results in [EXCEPTION]: For input string: "3275052860"
+explanation=Detail of archiva trace log: [TRACE]
+class=bug-3-1796
+
+title=Unable to restart Archiva after restarting Tomcat : "SQL Exception: Failed to start database"
+current=After restarting Tomcat, I get the following exception in the log file: [TRACE]
+current=And Archiva does'nt work anymore!!!!!
+useless=Please help!
+useless=Fanx.
+class=bug-4-724
+
+title=Archiva consumer archetype cannot complete integration-test on windows
+current=Building archiva as mention in [URL] fail on windows during verify goal in [FILE] of archiva-consumer-archetype
+explanation=[TRACE]
+class=bug-5-1669
+
+title=Error 500 after Login
+current=Using Version 1.2.1 productive an this error occurs
+useless=Can you help me please?
+explanation=[TRACE]
+class=bug-6-1237
+
+title=Unable to get artifact-level maven-metadata.xml of artifacts that are only three directory levels deep
+current=Example request path that would fail: [URL]
+class=bug-7-1239
+
+title=No access to repositories with guest as a global repo observer
+current=After granting the Global Repository Observer role to the guest user, I am prompted for an id and password when accessing the url for a managed repository such as the preconfigured 'internal' repo.
+explanation=MRM-323 seems to be the same thing, but on Tomcat.
+class=bug-8-349
+
+title=Cannot manually delete artifacts via web GUI
+drawback=This bug has caused me considerable amounts of trouble.
+current=If you upload a series of .jar's and make a mistake, you cannot delete the one uploaded artifact that you messed up.
+explanation=I uploaded a pom file, but I accidentally left in [CODE]. 
+current=Now, I can't delete the pom artifact when I log in as admin and delete the artifact from the default internal repo. 
+current=Archiva indicates that I successfully deleted the artifact, but the artifact remains. 
+current=It does not go away if I refresh the page, shift + refresh the page, or log out and log back in.
+drawback=This forces me to delete the entire package to which I uploaded 40-something .jar artifacts. 
+drawback=I have to start all over again.
+class=bug-9-1724
+
+title=Bad mod on file in the bundle
+current=When building the bundle of Archiva, some files have incorrect mod: [TRACE]
+class=bug-10-1653
+
+title=Exception trying to change Passwort
+current=trying to change the passwort results in exception as shown in ghe screenshot
+class=bug-11-1077
+
+title=One of our two archiva servers does appear to close file descriptors.
+explanation=We have two archiva servers. 
+current=One gets "Too many files open" after a few days (a few hundred builds) and has to be restarted.
+current=However the second server fails to even perform one build.
+explanation=If you see the attached file you can see archiva exhausts all of it file descriptors in under a minute. 
+drawback=After that the server has to be restarted.
+class=bug-12-1103
+
+title=Cannot upload artifact to WEB UI any more
+explanation=Here is reference to the discussion [URL]
+class=bug-13-1137
+
+title=pom version is not resolved
+explanation=I compose pom.version from 4 properties:[CODE]
+current=But it looks Archiva does not resolve pom.version and it is not possible to browse this artifact (see attached screenshot).
+explanation=Attached [FILE], mentioned project's pom.xml and screenshot of browse page.
+class=bug-14-487
+
+title=Network proxy does not work for version 1.1
+current=With the default setup of archiva (after following instructions about how to setup archiva in tomcat) I am unable to use a network proxy. 
+explanation=The id is devproxy, the protocol is http, the host is devproxy (dns entry for the proxy server) and the port is 80. 
+explanation=I've left the repositories the same as in the default setup, and in the proxy connectors I've changed central from (direct connection) to devproxy.
+class=bug-15-886
+
+title=Archiva runs out of heap memory
+current=Archiva appears to run out of heap memory frequently and the service crashes.
+expected=512mb should be more than enough.
+class=bug-16-682
+
+title=should not respond with a 404 if proxying a file results in a remote error
+current=if any repository returns success, return success
+current=otherwise, if any repository returns in error, return a generic error (500), saying to check the logs.
+class=bug-17-159
+
+title=Cannot download a strut-module artifact in a Legacy repository
+explanation=I still have legacy Maven 1.1 projects which uses the struts-module plugin.
+explanation=I was using maven-proxy until now but decided to switch to archiva.
+current=However when I try to download a struts-module in my Maven 1.X repository, I get the following exception: [TRACE]
+class=bug-18-664
+
+title=Link to mailling list subscription do not work
+current=Currently all the links to subscribe on the mailing list do not work on this page [URL] result in 404 page not found.
+class=bug-19
+
+title=Rest call for copyArtifact throws [EXCEPTION] if destination exists
+current=The rest service copyArtifact throws [EXCEPTION], if the destination artifact exists already.
+expected=Should either overwrite, or return a proper error response.
+class=bug-20
+
+title=Obsolete snapshots are not getting deleted from the disk
+explanation=The configuration of the repository: [CODE]
+current=After a month of operation, old snapshot files are still in the repository directory. 
+class=bug-21
+
+title=Unable to deploy on wildfly 10
+current=I can't deploy archiva on wildfly 10: [TRACE]
+class=bug-22
+
+title=Deleting files from repository in filesystem confuses Archiva
+current=Archiva seems to have a problem when files and/or directories from its repository are deleted.
+explanation=I see lots of exceptions and such messages in the archiva.log: [TRACE]
+class=bug-23
+
+title=Failure to publish sbt plugins
+explanation=Sbt plugins have somewhat specific structure, because they can be compiled for specific version of Scla and specific version of Sbt.
+current=If I try to publish [URL] to Archiva, it gets upload successfully, directories are created, but no content.
+explanation=The log file shows an error: [ERROR]
+current=But if you generate pom file with sbt itself, it will have [CODE] 
+class=bug-24
+
+title=Change Password via Edit Details button not working
+current=After logging into our Archiva instance, I can click on the Edit Details button to change the password. 
+current=I enter the existing password and the new password (twice) and click the OK button. 
+current=The dialog remains on screen with no indication of what has happened. 
+current=After a while, I closed by web browser window and opened a new one - I then attempted to login with the new password, only to find that the password change had not occurred.
+explanation=After an investigation, I found that the change password dialog was making a POST to [URL], which was failing with a 500 Internal Server Error. 
+explanation=The stack trace follows [TRACE]
+class=bug-25
+
+title=Filelock unit test issue on windows file system
+current=[METHOD] is failing on line 78 because of an execption raised in [EXCEPTION]
+explanation=[TRACE]
+explanation=It's disrupting behaviour of plugin on windows 8.1.
+explanation=[URL] is showing similar symptom.
+class=bug-26
+
+title=Customised guest user for LDAP not working
+current=When using the following: [CODE] I was unable to download anything without authentication.
+explanation= Renaming the LDAP user to guest and then changing the configuration solved the problem.
+explanation=(Note, it would still be great to not require this user at all, and just let 'guest' be built-in instead)
+class=bug=27
+
+title=validation doesn't work for Windows users on path of add managed repository page
+current=Windows paths typically have ':' in them for the drive letter, but this is no longer accepted as valid in the location field of the repository.
+explanation=This applies to other settings such as " " as well, we should only exclude those that are a problem for XSS
+class=bug-28
+
+title=problem reports for a given repository show errors in other repositories
+explanation=after scanning my repositories, I searched for problem reports constrained by the 'test' repository. 
+current=However, while it was a limited set of reports, some from other repositories (notably internal) also appeared.
+class=bug-29
+
+title=metadata updater consumer should delete any proxy metadata that it cannot parse.
+expected=metadata updater consumer should delete any proxy metadata that it cannot parse.
+current=The following exception is thrown: [TRACE]
+explanation=The proxy metadata looks like this: [CODE]
+class=bug-30
+
+title=upload page does not allow certain characters in version string
+explanation=Unfortunately, I'm required to have some version numbers like this: [CODE]
+current=This is ok for the mvn deploy mechanism for uploading to archiva, but when uploading from the new UI web page provided by archiva 1.1.1 this causes problems, and will not upload.
+class=bug-31
+
+title=track consumers in use and index version to know when an repository needs to be reindexed
+current=currently if you add consumers, it will not trigger a re-scan of the repository. 
+expected=By tracking the ones in use we should be able to trigger full scans of the repository as appropriate, also making upgrades easier
+class=bug-32
+
+title=Archiva does not expose certain artifacts for download
+current=I have a module that publishes an artifact of type tar, but when I browse to it in Archiva, the tar file is not available for download
+explanation=For a given artifact: [CODE]
+explanation=In the directory there does exist a file of compatible layout, [JAR]
+class=bug-33
+
+title=Syntax error in DOAP file release section; wrong bug-database URL
+current=DOAP files can contain details of multiple release Versions, however each must be listed in a separate release section, 
+example=for example: [CODE]
+useless=Please can the project DOAP be corrected accordingly?
+explanation=Also the DOAP still references Codehaus
+useless=Thanks.
+class=bug-34
+
+title=Urls are not correctly constructed for artifacts with multiple extensions
+example=For instance [FILE] will assume extension is zip
+class=bug-35
+
+title=[EXCEPTION] exception with JBoss
+current=The redback-integration artifact still contains some references on taglibs which doesn't exist anymore 
+current=this cause a failure when deploying in jboss.
+class=bug-36
+
+title=Javascript error when no archiva_login cookie present
+current=When the archiva_login cookie is not present the method to retrieve the user session fails with a javascript error. 
+current=This causes the main page to not load correctly.
+explanation=Adding the snippet below fixes the issue - but probably doesn't conform to your style guidelines.
+explanation=[CODE]
+explanation=The underlying problem is that cookieContent is undefined and the call to [CODE]
+class=bug-37
+
+title=RSS feeds do not work after Struts upgrade
+current=Struts is grabbing them and not finding the feeds servlet. 
+drawback=May also impact the XMLRPC interface.
+class=bug-38
+
+title=archiva-cli does not work
+explanation=Multiple failures due to missing dependencies / spring configuration.
+class=bug-39
+
+title=NPE while browsing artifact with missing pom
+current=The browsing page for some artifacts is failing with the following error
+explanation=An error has happened you must contact the administrator to check the logs.
+explanation=[TRACE]
+class=bug-40
+
+title="Remember me" not working
+current=The remember me feature doesn't seem to work. 
+current=I get logged out quite frequently (didn't use a stopwatch, but about 10-15 minutes of inactivity are sufficient to log me out)
+class=bug-41
+
+title=Nullpointer when browsing artifacts which have dependencies with scope "import"
+current=When browsing artifacts with dependencies with scope "import" the following NPE occurs.
+explanation=[TRACE]
+class=bug-42

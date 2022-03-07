@@ -1,0 +1,414 @@
+title=Add support for Last.fm radio streaming
+expected=It would be nice if Mopidy supported <FILE-RM> radio streaming,
+example=for example through MPD commands like this: <COMMAND>
+explanation=This is already supported by the MPoD client.
+
+title=Add support for Spotify playlist management
+expected=It would be nice to be able to manage Spotify playlists through Mopidy. 
+example=for example, create/rename/remove playlists, and add/move/remove tracks in playlists.
+
+title=Add support for virtual directories in the library
+expected=It would be nice to have virtual directories in the library that does not reflect directories on some file system, but exposes various collections of tracks from the backends. 
+example=Examples include:
+expected=Possibly, each backend should be given its own top level namespace it could expose virtual directories within.
+
+title=Add an alternative storage for caching meta data
+benefit=The local backend could possibly benefit from having an alternative to the tag cache file for caching track meta data. 
+explanation=A suggestion is using Sqlite.
+
+title=Add more powerful search capabilities
+current=Currently, the search capabilities in the local backend is quite naive and simplistic. 
+expected=It would be nice to have more powerful search capabilities, maybe using an existing search solution.
+explanation=An existing search solutions that seems interesting is Whoosh which is a pure Python search engine, available under the Apache 2 license, both from PyPI and as a Debian package.
+
+title=WiMP / Tidal support
+expected=It would be nice to have support for the Norwegian music streaming service, WiMP. 
+current=They currently have no public API or library, unlike Spotify, but according to tweets from their official Twitter account they do have private APIs that it is possible to gain access to.
+explanation=I guess they won't like their private APIs to be used in an open source project, but maybe we could get access and develop the backend as closed source, only to publish it once they make their API public?
+
+title=Add a DLNA Media Server (DMS) frontend
+expected=We could expose the Mopidy library to DLNA players/renderers if we add a DLNA Media Server (DMS) frontend. 
+benefit=This would allow modern TVs and other DLNA compatible players to play music served by Mopidy.
+explanation=Coherence is a Python implementation of DLNA, and may help us implementing this.
+explanation=Note: This issue does not concern Mopidy playing music stored on other DLNA Media Servers, like a NAS on your local network. 
+example=For that feature, see [URL].
+
+
+title=Add support for XMMS2 clients
+explanation=If we add a frontend implementing the XMMS2 IPC protocol, then XMMS2 compatible clients would be able to control Mopidy
+example=just like MPD clients.
+
+
+title=Add support for controlling Mopidy through LIRC
+expected=If we add a frontend for controlling Mopidy through LIRC, one would be able to control Mopidy using infrared remote controls,
+example=like the one you got for your TV.
+
+title=LIRC mixer to control amplifiers remotely
+expected=With a LIRC mixer, Mopidy would be able to control arbitrary amplifiers remotely.
+
+title=RAOP audio output
+expected=If Mopidy supported RAOP audio streaming, we could stream audio to Apple's AirPort Express.
+
+title=Support Spotify playlist folders
+current=In Spotify you can organize playlists into folders, but Mopidy does not support this structure.
+expected=Even though MPD does not support playlist folders, our backend API should expose the folder structure, and let it be up to the frontends to either flatten it or show it as is. 
+example=The MPD frontend could for example prefix playlist names with the playlist's location in the folder hierarchy.
+explanation=This requires support for playlist folders in pyspotify.
+
+title=FUSE frontend
+expected=It would be nice with a FUSE frontend to expose objects as files accessible through the file system.
+example=GithubFS example: [URL]
+
+title=Daemonize + logfile options
+expected=Would be nice to be able to daemonize mopidy and have it redirect output to a designated file that can be rotated using the SIGHUP signal (new logfile). 
+explanation=I now use start-stop-daemon in combination with a shell script that redirects stdout and stderr to <FILE-LOG>. 
+explanation=Not a pretty solution, but it works.
+
+
+title=MPD command: Implement 'listallinfo'
+explanation=I'm using the mpd frontend to communicate with mopidy but I've found a fundamental difference between the way mopidy responds to a command when compared with mpd. 
+explanation=The command is listallinfo
+current=When used with no arguments in mpd, this returns a complete list of every track, with all its tags, that is currently in the tag cache.
+current=When used this way with mopidy I get <COMMAND> incorrect arguments.
+explanation=I used mopidy-scan<COMMAND> to create the tag cache, I'm not sure if this is relevant.
+class=bug
+
+title=Stop using appsrc for spotify playback.
+expected=All playback should be done via gstreamer elements that support the uri interface gstreamer supports. 
+benefit=This would greatly simplify a lot of issues as we could fall back to simply always passing the uri to the uridecodebin as is instead of doing funny things like using an appsrc for spotify. 
+explanation=I have more thoughts about this and the recent comments in #40<html-link> and #38<html-link> fit into this.
+explanation=Major hurdle right now is that although I know how to write gstreamer elements in python (and C for that matter), it is not yet clear how to implement the URI interface via the python bindings. 
+explanation=This might just be a gobject issue more than a gstreamer one, but I'm still looking.
+
+
+title=Support playlists with identical names
+explanation=Spotify supports playlists with identical names. 
+expected=In our MPD frontend we should probably append "[1]", "[2]", etc. 
+explanation=as the MPD protocol only references playlists by name, and they need to be unique.
+
+title=SHOUTcast: Clients get disconnected when we reach end of playlist
+expected=It might be nice to switch to playing silence for streams to keep everyone connected.
+
+title=Add mute to the playback and gstreamer APIs
+expected=Even though we don't have mute in MPD we should still support this for more sensible frontends.
+
+title=Add support for libcec based control
+benefit=Using libcec we could control devices and/or be controlled via HDMI CEC. 
+example=See [URL]
+benefit=This would also allow for input switching, volume control and finally note that the raspi ha built in support for cec
+
+title=Use GstDiscoverer for scanning?
+benefit = from [CODE] import discoverer could be used to have nicer API for scanning files
+
+title=Use m3u8 + utf-8 for playlists in localbackend
+expected=Storing stuff as latin-1 is so 1990's, we want utf-8.
+
+
+title=Allow for easier changing of logging settings
+expected=Basically I want a setting and flag to control logger levels. 
+explanation=Something along the lines of <CODE> and <CODE>
+benefit=Goal is to make it much easier than it is today to have mopidy log levels be verbose for only the systems I'm actually working on. 
+current=Current hack I do is just have an import logging in my local settings and set things up there.
+
+
+title=Always keep volume up to date
+expected=We could poll the mixer volume regularly and trigger the volume_changed event when it changes 
+benefit=so that clients which doesn't poll volume will be updated when for example the user changes the volume using volume controls outside Mopidy.
+
+title=Log to /var/log
+expected=Mopidy installed from a Debian package should be able to log to the system log dir, for example /var/log.
+
+title=Cache files in /var/cache
+expected=Mopidy installed from a Debian package should be able to cache files to the system cache dir, for example /var/cache.
+
+title=Consider switch event propagation method
+current=Currently we broadcast to actors based on Pykka mixins
+expected=an alternate that might make sense is to have our code actively register listeners against core instead.
+
+
+title=Clearer frontends concept
+expected=We should consider moving the <FILE-FM> scrobbler out of the frontends module and call it something else. 
+explanation=It's the only exception to the claim that "frontends expose Mopidy's functionality to some client".
+explanation=The only thing common in between the <FILE-FM> scrobbler and the other frontends are that they use the core API and shares the FRONTENDS setting.
+
+title=Create Pi Musicbox
+expected=It would be nice to create an image for the Raspberry Pi containing nothing more than a fully working (headless) Mopidy server and an explanation=The user should only have to create an SD-card using the image, boot up the Pi and go to the ip of the Pi in the webbrowser. 
+benefit=After configuring username and other settings (service, audio-output, local) in this interface, the Pi should work easily.
+drawback=It's too difficult to set it up right now, with editing config-files, audio-issues, adding a repo, updating the system, etc.
+example=a couple of issues need to be fixed before this is possible, for example #280<issue-link>
+
+title=Create expand playlist code for use in local/streaming backends.
+expected=This code should be able to take a URI and 1) determine if it is a playlist based on basic extension matching 2) parse / expand it to a list of tracks and/or playlist instance.
+expected=As for playlist types we should consider supporting the current list is M3U(8), PLS, ASF, ASX, RAM and XSPF. 
+explanation=When it comes to actual use in the backends the idea is that we check for a playlist match in the lookup method of the library, and if we match fetch, parse and expand the playlist, returning the tracks instead.
+
+
+
+title=Use auth token for lastfm credentials
+expected=As #116<issue-link> we should not be storing plain text passwords. 
+expected=We should look into if we can use pylast (or the scrobbler API directly) in such a way that we prompt for missing credentials, use them to get a token and then simply store the token for future authentications.
+
+title=Adding artists to spotify backend should expand albums, then tracks.
+current=Currently we just expand tracks, most people adding an artist most likely want the tracks grouped by albums. 
+expected=We can either iterate over the albums from the artist browse objects, or manually group the tracks.
+
+title=Persist mopidy state between runs
+expected=Basically adding support for persisting the current tracklist and position in it in such a way we can reload it at startup. 
+explanation=Idea came out of now closed pull request #181<issue-link>
+
+title=Add lists of tracks to queue via a simple id
+expected=For the speed of the webclient it would be nice to be able to add a list of tracks from an album, playlist, artist, search, etc by not resending all tracks back to the server, but only an id
+example=like <CODE> 
+benefit=Mopidy can then add the tracks itself, which is a lot faster.
+
+title=Add the 'starred' playlist to the playlist catalog
+expected=I missed the 'starred' playlist from original spotify client at the mopidy playlist catalog.
+
+title=Add possibility to start multiple instances of mopidy on the same computer
+expected=It would be nice to be able to start multiple instances of mopidy.
+explanation=Every instance get its own <FILE-PY>-file which you has to specify as start parameter
+
+
+title=Narrow down library search to specific backend.
+useless=Loving Mopidy! 
+explanation=Our office music player has been replaced by a Raspberry Pi hooked up to a speaker system.
+explanation=I've written a JS / Backbone web client (inspired by the web client by @woutervanwijk) 
+useless=I have a bit of a wishlist item that I want to tentatively propose.
+current=Performing a lookup by id is great for pulling down the collection of artist data on Spotify, but it excludes local files. 
+current=For local files, I'm currently doing a search or find_exact call (which I'm not too keen on) to grab the local files. 
+current=Of course this also causes the Spotify backend to do its own search and so it adds considerable overhead. 
+expected=I suppose I'm asking for a search_local to only use the local backend.
+explanation=However, this would possibly mean that there'd need to be a search_dummy, search_spotify, search_foo and so on. 
+explanation=I don't know Python well enough to know whether those methods could be dynamically created or whether there'd have to be some sort of search_with method that allowed you to specify the backend as a parameter.
+
+title=Drop Python 2.6 support 
+explanation=Most distros we care about (Ubuntu, Arch, etc) have had Python 2.7 as the default Python 2.x implementation for a long time. 
+explanation=We also care about Debian, and a lot of the users running Mopidy on Debian use Debian stable. 
+explanation=The current Debian stable version, squeeze, has Python 2.6 as default. 
+explanation=The next Debian stable version, wheezy, has Python 2.7 as default. 
+explanation=The trend of the RC bug count concerning wheezy (see <LINK-HTTP>) indicates that wheezy may become the new Debian stable in 1-3 months time. 
+explanation=Famous last words, I know
+expected=I propose that as soon as Debian wheezy is released, we drop support for Python 2.6 and require Python 2.7. 
+benefit=This will have the following benefits:
+useless=Feel free to add further benefits or drawbacks as comments. 
+useless=Please shout out if you think we should continue to support Python 2.6 after Debian stable gets Python 2.7.
+
+
+title=Make scrobbler work with Libre.fm, etc
+current=The scrobbler frontend currently only works with <FILE-FM>. 
+explanation=The underlying library, pylast, also supports <FILE-FM> and maybe other API-compliant services. 
+expected=We should generalize our frontend 
+benefit=so that it can be used with other services than <FILE-FM>.
+
+title=Multi unit synchronous audio
+expected=I would like to use several (in my case Raspberry Pi with Pi Musicbox) in my house. 
+expected=I would like to have all these units play the same stream synchronously. 
+benefit=This means that I could play the same Spotify music in all house with one Spotify account. 
+explanation=To make this all audiobuffer in all units has to be synchronized with each other.
+explanation=The expensive audiosystem Sonos has this killer feature.
+
+title=Keep a history of played tracks
+expected=It would be a nice feature to have a history of tracks played so the user can trace earlier played tracks.
+
+title=Allow metadata field in track model
+explanation=Primary use is for passing additional data to web frontends from backends
+
+
+title=Add support for installing static dir folders to export over want=Basic idea is to have an extension hook that allows webclients to tell us they want to expose director(y/ies) on our explanation=The folder would automatically be installed as a resource and exposed on <PATH> could provide a list of installed clients and auto redirect if only one is installed. 
+expected=Core should store these resource folders allowing the explanation=Note that <PATH> without the trailing slash should redirect to <PATH>
+drawback=Only slight annoyance in this is that this feels a bit like making the benefit=But it feels a lot better than having webclient packages reach into the 
+
+
+title=Support crossfading between tracks
+useless=Hi,
+expected=Add the crossfade value in configuration file to a general crossfader between tracks changes.
+useless=Regardsm
+
+title=Feature request: Build for Synology DiskStation
+expected=Goal: Run mopidy directly on NAS, with output via USB DAC (HRT MusicStreamer in my case). 
+benefit=This could reduce computer count by one in my living room :)
+explanation=I tried building Mopidy to run directly on my DiskStation NAS. 
+explanation=however, I only got to compiling gstreamer (on the NAS), but could not acquire a working glib.
+explanation=Maybe someone with a bit more linux/cross-compilation skills could assess if this is possible or not?
+explanation=In my particular NAS (DS413j) there is a Armv5 cpu without FPU. 
+explanation=Can gstreamer/mopidy run without FPU?
+example=sources:[URL]
+
+title=Support Stations, on-the-go current playlists
+current=When using services that let the user get rid of having to put manually his songs (by playlist or by search result), the current playlist gets updated automatically by the backend service when the previous track stops playing.
+explanation=The most complete case of use, it is when either listening to a grooveshark broadcast or when clicking in a Gerne/search result/user profile Radio
+
+title=Frontend support for users and access levels
+expected=It would be nice for some use cases to limit control over mopidy from certain devices(clients) or users.
+example=for example, At social events you would want guests to be able to add songs to the tracklist; 
+expected=however, for the enjoyment of other guests, you wouldn't want them to be able to delete songs from the tracklist or skip songs. 
+expected=At the same time the host would want full control of the tracklist as to avoid songs inappropriate to the setting/venue or at the request of another guest.
+
+title=Exclude files regex for mopidy-scan
+current=When I scan my music collection, mopidy-scan bombards me with messages like:<MESSAGE>
+expected=Can I exclude files using something like <CODE>? 
+useless=If not, this is a wish :)
+
+title=Create nightly Debian packages
+expected=Having a daily built development PPA on Launchpad would ease testing  of latest code. 
+explanation=Adding a PPA is one of the easiest ways for users to access packages outside their distros and lowering this barrier as much as possible can help attract more testers 
+example=Read more on why[URL]
+explanation=The way to accomplish  this is  using Launchpad's  "packaging recipes"  and code imports from  the  appropiate branches  at  Github. 
+explanation=Mopidy's Launchpad page is already set up at: [URL]
+
+title=Auto-generate playlist in local backend based on "new" tracks
+expected=It would be really neat if we could auto-generate a playlist having all the tracks added within the last X days - and label this playlist "New music" or something like it.
+benefit=I rip my music on a continuous basis, but I sometimes forget about it, and this would be a nice way just to have it at hand and play the playlist.
+
+title=Scanner extension case insensitive
+expected=The match against blacklisted extensions should be made case insensitive in my opinion. 
+drawback=It doesn't make sense to create a long list with duplicates when comparing like so:<list>
+explanation=Maybe a simple <CODE> on the extension will be enough?
+
+
+title=Allow skipping quotes for all MPD command arguments without spaces System_Do=The MPD docs on request format says:<MESSAGE>
+current=We're currently expecting to always get quotes, and only allow skipping the quotes for some cases that has been required to support popular clients.
+expected=We should probably support both command <CODE> and command <CODE> for all MPD commands.
+
+title=Switch to setting up logging on mopidy logger instead of root.
+expected=We should switch to using the mopidy logger to setup our logging, leaving the root handler with a null handler.
+explanation=Goal should be something like:<list>
+benefit=Advantage of this would be that we no longer need to actively suppress pykka, ws4py, cherrypy, etc, logging.
+
+title=Wishlist: HTTP command to check interface version
+expected=It would be useful to have an HTTP API command (for example <CODE>) that would return the current mopidy version so that clients can check they are compatible with it. 
+expected=I'm currently updating mine (RompR) to work with mopidy 0.17, and would like to be able to warn users that their version of mopidy is out of date if they're running an earlier version.
+ 
+ 
+title=Support split config files
+expected=Mopidy needs support combining multiple config files.
+benefit=so that Debian packages for extensions can install their own config fragments into for example [URL], and that way be configured to use for example <PATH> when running as a system daemon.
+
+
+title=Mixer volume in config
+expected=Be able to set an initial value for the mixer volume in the config file.
+benefit=This is useful when using a frontend like Pi-MusicBox, which uses the software mixer, in conjunction with DACs that have no mixer control like the HifiBerry.
+current=The current behavior sets the volume at 100% which is a proper setting for waking the neighbours
+
+title=Can't Play Previous Songs in Randon or Repeat Mode
+current=Using NCMPCPP controls or MPC Prev just result in the current song being repeated, it won't play the previous song. 
+current=This works find with MPD, however, eliminating it from being a client error.
+explanation=I can provide any files you may need.
+class=bug-1-1589
+
+title=Hidden directory not skipped when at top level
+current=When building a local library with mopidy local scan, hidden directories are being skipped, but only if they are in a subdirectory of the media_dir. 
+current=If they are directly in the media_dir, they are scanned.
+explanation=I believe the offending code is in class ScanCommand#121, which checks for /. in the relative path.
+class=bug-2-1559
+
+title=Error when trying to add stream via MPD client
+current=I activated the stream plugin and use GMPC to add a URL, however I get errors:[TRACE]
+class=bug-3-1557
+
+title=Audio scanner not handling duration smaller than zero
+explanation=I was trying to play this stream:[URL]
+current=And I was getting this error:[TRACE]
+current=But I played changing the timeout setting on the configuration file adding:[CODE]
+current=Before I had nothing, and after adding the timeout setting is working.
+explanation=I spent a lot of time installing and uninstalling Gstreamer. 
+explanation=The error message from the timeout should be better.
+explanation=I started changing the timeout setting after seeing this file: [URL]
+class=bug-5-1526
+
+title=Character encoding issue during local media scan
+current=When running mopidy local scan on a clean mopidy install I get the following error message [TRACE]
+current=I am running mopidy on OSX, installed via homebrew.
+class=bug-6-1508
+
+title=can't play rtsp stream
+current=Hi, I'm using version 2.0 and I can't play rtsp stream, this is log output: [TRACE]
+current=I norrowed it down to the mopidy.audio.scan.Scanner class. if I type: [CODE]
+current=I get: [TRACE]
+explanation=You can reproduce it with some accessible link, e.g.: [URL] [URL]
+class=bug-7-1479
+
+title=Scanner: Date tags not extracted since Mopidy 2.0
+current=Running on ubuntu, installed from the PPA. I've just added a few new local tracks (both MP3 and FLAC) and scanned them using mopidy local scan but I don't see the Date information for any of the tracks.
+current= Eg by using mpd command 'lsinfo "directory/with/new/tracks"', I get all the usual stuff except for Date. 
+current= If I do lsinfo on a directory I had scanned prior to the upgrade to mopidy 2.0, I still see the Date information so it looks as if the scanner is broken.
+class=bug-8-1471
+
+title=Can't build mopidy documentation
+current=n current develop branch: building the documentations fails due to static reference to gobject.
+explanation=Please check what other modules are not needed anymore. [URL]
+current=[TRACE]
+class=bug-9-1431
+
+title=Error mapping GST state
+current=I played around with stuff adding and playing tracks etc. 
+explanation=Not sure what triggered this.
+current=[TRACE]
+class=bug-10-1430
+
+title=Fix unplayable track behavior in consume mode
+explanation=We need to reintroduce the tests and fixes done by @jcass77 in v1.1.2 for the combination of consume mode and unplayable tracks (tracks with a backend, but where the backend URI translation returns None). 
+explanation=I dropped these fixes in the release-1.1 into develop merge (#1400). 
+explanation=I have a branch I need to finish to reintroduce/redo the tests and fixes.
+class=bug-11-1418
+
+title=Audio dropout before track change
+current=With the current develop version I have audio dropouts a few seconds before a track change. 
+current=The dropout occurs exactly when mopidy calls PlaybackProvider.translate_uri.
+current=In my backend PlaybackProvider.translate_uri blocks ~ 0.6 second for an internet access.
+class=bug-12-1409
+
+title=Duplicate seek events to appsrc
+current=Currently we get one seek data event per output in the tee. 
+current=This can be easily verified by commenting out the dummy fakesink in the tee, or adding extra ones. 
+current=The end result of this is that mopidy-spotify seeking isn't smooth, as we start playing from the seeked position and then do it again shortly afterwards.
+explanation=Proper fix for this, assuming multiple outputs is still a goal is to have mopidy de-dupe this, or to do it ourselves via the new segment events getting to the tee.
+class=bug-13-1404
+
+title=Mopidy randomly crashes
+explanation=The last few days/weeks I experienced some strange behavior with Mopidy. 
+current=I'm running a setup with Mopidy en Mopify on a Raspberry running Raspbian. 
+current=For some reason it sometimes randomly crashes when a song has ended.
+current=The output of service mopidy status shows me the following:[TRACE]
+useless=Anyone who has any idea of what's happening?
+class=bug-14-1383
+
+title=Unplayable tracks are not processed correctly when 'paused'.
+current=When the user performs stop->next->play, Mopidy will keep skipping over unplayable tracks until it finds one that can be played.
+current=This also works if the user does pause->next->play.
+current=However, when the sequence changes to pause->next->resume, Mopidy will try to resume playback on the unplayable track, which could produce unexpected results.
+class=bug-15-1378
+
+title=Mopidy Core crashes when playing bbc podcast
+explanation=Hi,I am using mopidy 1.1.1.1 with odroid. 
+current=When I try to play the bbc podcasts the mopidy core crashes.
+example=Here is one example mp3 file [URL]
+explanation=From this podcast:[URL]
+current=[TRACE]
+class=bug-16-1366
+
+title=dbus exception in zeroconf code
+explanation=We should catch this in such a way that we don't get a traceback.
+current=[TRACE]
+class=bug-17-1363
+
+title=Empty Track URI can cause crash 
+current=I've seen an issue where using an empty file URI (as file:) would crash ncmpcpp: [URL]
+explanation=I could imagine several ways to prevent this, e.g. by not returning lists with empty uris in lsinfo.
+explanation=Another possibility might be to have something like blank=False for URI attributes in Track classes, but that's not so straight-forward (but I've some patch in this regard already).
+explanation=The track comes from mopidy-soundcloud, where this should be fixed additionally, too
+useless=What do you think?
+class=bug-18-1340
+
+title=FLACs in queue are not played one after another
+explanation=I've got mopidy in a virtualenv enviroment. 
+explanation=Sound without resampling is directed to alsasink input (here USB DAC). 
+current=My problem is when I queue several FLAC tracks (red book standard) for playback, when another track is to be played, mopidy fails. 
+current=I need to manually click on a track to make this happen (via musicbox). 
+current=I think the following is most important excerpt from a debug log file: [TRACE]
+class=bug-19-1195
+
+title=Playing local track throws error in Mopidy 1.0
+current=After upgrading Mopidy to 1.0, when I start track taken from local backend, I get error (from var/log/mopidy/mopidy.log):[TRACE]
+current=I'm using mopidy.js and error reported in browser console looks: [CODE]
+class=bug-20-1092

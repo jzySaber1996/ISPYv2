@@ -1,0 +1,940 @@
+title=Hiberante new feature  - 231
+expected=Add integration test with Spring
+expected=Users expect to be able to use Spring with OGM but we don't have an integration test at the moment.
+benefit=This is also helpful as demo or example.
+
+title=Add new operations to native CLI in MongoDB
+explanation=Since 3.2 there are some new operations that the user can execute:
+expected=It should easy to add them to the currently supported operations 
+explanation=but if it's too complex, we can split this JIRA in subtasks.
+
+title=Associations should be mappable to a different Relationship-Type name
+explanation=For Entities and their properties it is possible to specify a name when the class or property name differs from the label or propery name in the database.
+example=for example <CODE>
+current=Unfortunately there seems to be no equivalent for Associations. 
+expected=Either add this feature or enhance the documentation if this is already possible, please.
+example=I would expect it to look something like this:<CODE>
+
+title=Support Neo4j 3 remote datastore through the bolt protocol
+useless=Hi,
+useless=thanks for supporting neo4j remote datastore and working on the integration of Neo4j-3.
+current=The current remote protocol consumes the datastore's REST interface. 
+expected=Are there any plans supporting the remote protocol "bolt" introduced in Neo4j-3 as an alternative transfer mode?
+explanation=The java implementation of "bolt" is available at <LINK>.
+explanation=The might be some performance improvements see <LINK>
+explanation=This is just for the javascript driver version but it might apply for the java implementation as well.
+useless=Thanks
+
+
+title=Make ORM and Search version referenced in documentation a property
+current=Currently there is "5.0", "5.5" or even "/stable/" specified several times in the AsciiDoc source. 
+expected=It should be build properties.
+
+
+title=Add more verbosity to exception thrown by OgmEntityEntryState#getStateFor()
+current=In OgmEntityEntryState method getStateFor, there's an attempt to retrieve the object from the persistence context. 
+current=If the object is not found in the persistence context, then an exception is throw stating " 'entityEntry' must not be null ". 
+expected=This is not very descriptive and could easily be improved by passing something like "entityEntry: " + object as the "name" parameter to <CODE>. 
+benefit=In this way the object's toString method will be called and appended to the exception output, allowing for easy identification of the object which is not in the persistence context.
+
+title=Support Neo4j 3.0
+explanation=See <LINK>
+explanation=Need to investigate what's new and how OGM is affected. 
+expected=Can we support 2.x and 3.0 with a single dialect, or should there two separate ones?
+
+title=Support nested embedded collections for MongoDB
+expected=Ideally, we should support this for document stores in general.
+explanation=Sometimes users need to map this kind of document:<CODE>
+explanation=Basically, it's the mapping of collection of embeddables with another collection of embeddables.
+current=The problem is that this mapping is not supported by JPA or Hibernate, we need to find an alternative.
+explanation=Maybe a user could use entities instead of embeddables with some additional OGM specific annotation or properties.
+
+title=Map IDENTITY id generation strategy to inline uuid() call in Cassandra
+example=Similar to the mapping of ObjectId in the MongoDB backend
+expected=it should be possible to map the IDENTITY strategy to uuid() calls within the INSERT statement.
+
+title=It's not possible to set a SocketFactory for the MongoClient
+expected=We should provide the user a way to set properties that are not primitives to the MongoDBClient.
+expected=An example in the documentation would be nice.
+
+
+title=Implement PostLoad annotation support
+expected=Implement support in OGM for the PostLoad annotation which is currently supported in ORM. 
+explanation=The annotation allows for entity methods to be automatically called following an instance's initialization from the underlying datasource and thus provides the ability to carry out post-processing on the object.
+explanation=Some discussion on this feature:<LINK>
+
+title=Map time ordered series of events in Neo4j
+expected=The idea is to map a series of events as nodes connected by NEXT and/or PREVIOUS relationships.
+benefit=This allows for very rapid traversal of events in time.
+explanation=More details in "Graph Database 2nd Edition" (Chapter 4, Time)
+
+title=Add versioninig of Nodes and Relationships
+expected=Graph can be versioned adding a timestamp to Node and Relationships, making it possible to retrieve the state of a graph in a particular point in time.
+explanation=Can this work with enverse?
+drawback=The drawback of this approach is that it complicates even the simplest query
+
+title=Map Timeline trees for Neo4j
+expected=One node for year, month, day and then the actual event node with a specific relationship. 
+expected=That creates a tree of timeline where the leaves are the events.
+benefit=It makes it easy to find events for a given period.
+explanation=More details in "Graph Databases 2nd Edition" (Chapter 4, Time)
+
+title=Errors during JavaDoc generation when running full build
+current=Apparently only on OS X (JDK 1.8.51) there are some errors reported, but the build itself succeeds and the JavaDoc is generated:<CODE>
+current=Also it seems the JavaDoc are generated twice (may be wrong on that, though).
+class=0
+
+title=Store simple id in case of non-composite ids on associated side
+expected=Similar to what we do for other dialects, we should save the simple id values for associations whose target type uses a non-composite key. 
+expected=Only where a composite key type is referenced, a JSON structure should be used.
+
+title=Enable alternative map representation also for single non-String key columns
+expected=Follow-up to OGM-555: For maps with a single key of another type than String we still could do the nicer representation when converting the key column value into a String. 
+explanation=That'd require a conversion through the grid type.
+
+title=OrientDB Integration
+current=Recently I've googled, digged around for good open source graph database. 
+explanation=read some forum, stackoverflow. 
+explanation=Then I've found OrientDB. 
+explanation=Some people recommending it. 
+benefit=It looks good. 
+expected=I think If ogm-orientdb module appear, I'll use it.
+explanation=Some links:<LINK>
+
+title=Support projection of embedded associations with LEFT JOIN in Neo4j
+current=At the moment we only support INNER JOIN but for Neo4j it is possible to execute left join as well.
+current=The renderer already keep track of left join or inner join via <CODE>
+expected=but we need a way to figure out if we are dealing with an INNER or LEFT join. 
+explanation=Check <CODE> for more details.
+
+title=Investigate alternative association mappings for Cassandra
+expected=Instead of mapping associations via dedicated association tables, we may leverage the list/set/map data types Cassandra provides for storing the ids of associated elements. 
+benefit=That be beneficial wrt to consistency (an entity and the associated ids can be written in one round-trip to the datastore).
+
+title=Support queries on referenced entity if stored on current side of association
+expected=It should be possible to support queries such as <CODE>
+explanation=Also without join capabilities if the associated id is stored on "this" side of the association.
+
+title=Multi-tenancy support for Hibernate OGM
+explanation=Hibernate Search now supporting a proper integration with the Hibernate ORM tenant-id system
+expected=Hibernate OGM has to at least comply with the SPI of Hibernate Search.
+explanation=It's possible that fully supporting multi-tenancy in OGM isn't far out of reach at this point, but would need at least some tests and probably some design brainstorming.
+explanation=Queries might already be generating the correct results, although I'd need to double check that the execution of queries isn't bypassing the filters enforced by Search.
+
+title=Remove CassandraDatastoreProvider#metaDataCache
+expected=I think we can get rid of the CassandraDatastoreProvider#metaDataCache field. 
+explanation=It only is used for testing (get number of entities), and there we can get the table names by iterating over the entity persisters accessible through the session factory.
+explanation=If that data actually is needed, it would have to be a thread-safe map as DatastoreProvider is accessed concurrently.
+
+
+title=Explore mapping Calendar as Strings in Cassandra
+current=As of<ISSUE-LINK> , 'Calendar' properties are mapped as a timestamp, loosing any time zone information. 
+example=For example, upon read-back we don't know the TZ to convert to. 
+expected=Instead we may provide an option to persist such properties as formatted Strings.
+expected=If we decide to wait for a future native Cassandra datatype with TZ support, we should log a warning or add a note to the docs about the loss of information in the current approach.
+
+title=Use MongoDB driver codec feature to avoid unnecessary object creation
+benefit=I have not investigated but if it could avoid the extra object creations we are seeing during the JSON / BSON parsing, that would be a nice performance boost for Hibernate OGM.
+
+title=Add support for joined inheritance (natural mapping for EAV stores)
+expected=As an OGM implementor, I would like to be able to map individual classes via joined inheritance. 
+benefit=Acknowledging that most NoSQL datastores do not support joins, this is a very useful strategy for at least Datomic and presumably any EAV datastore.
+explanation=Given that entities in EAV stores are represented as: <CODE>
+explanation=a natural mapping between JPA entities and EAV entities would be as follows:<CODE>
+explanation=Would map to<LIST> as attributes in the EAV store and eliminate unnecessary duplication of attributes.
+explanation=This should be relatively easy to implement, requiring a new EntityPersister, EntityDiscriminator, and the registration of the Persister with the OgmPersisterClassResolver
+
+title=Expose native type metadata in GridType
+explanation=Nowhere do we expose the native type expected out of a GridType. 
+explanation=This is needed for strongly typed schemas like Cassandra to generate the right type.
+explanation=This kind of info is present via Type.sqlTypes() in the ORM side. 
+expected=We need to offer something similar.
+explanation=Proposal:<LIST>
+
+title=Make authentication compatible with MongoDB 3.0
+explanation=MongoDB 3 brings a new authentication support SCRAM-SHA-1 and deprecated MONGODB-CR.
+explanation=The support came with Java's driver 2.13 but requires some migrations
+explanation=<LINK>
+expected=That should do the trick.
+explanation=The workaround according to Dean is to do <CODE>
+
+title=Investigate usage of MongoDB's GridFS for storing large binary data
+explanation=With GridFS MongoDB provides a way for storing arbitrary binary files. 
+expected=We might use it to store "overflows" of large entities, 
+example=for example it'd likely be a good fit for byte arrays:<CODE>
+
+title=Introduce RETRY error handling strategy
+current=Currently error handlers can only decide to abort or continue the current flush cycle in case of a failure. 
+expected=Another means of dealing with failures is to retry the failed operation.
+explanation=One could make the retry strategy to use configurable:<LIST>
+explanation=<CODE> would return RETRY, letting the configured retry strategy take over.
+explanation=As per the use cases from OGM-465:<LIST>
+
+title=Allow grid dialects to map custom exceptions into a set of standardized exception types
+expected=With the error handling API established with <ISSUE-LINK>,  users can decide whether to continue or abort the current flush cycle upon a failed operation based on the type of the occurred exception.
+expected=In order to allow handlers being implemented in a more datastore-agnostic way, there should be means for translating dialect-specific exceptions into more generic OGM-defined exceptions. 
+example=for example, a MongoTimeoutException or a HTTP connection timeout exception in the case of CouchDB would be translated into a NoSqlTimeoutException. 
+benefit=The error handler would receive that translated exception (with the original one as a cause) so it can do its decision in a more portable fashion.
+explanation=Grid dialects would need the ability to contribute their implementation of an exception translator contract which would be invoked prior to passing on any exception raised by the dialect implementation.
+
+title=Offer option to decide how aggressively removing a nested element
+current=Today after   <LINK>, a nested element with no property left is fully nullified. 
+explanation=This is a natural approach in most case except if the document is shared between several application and if unknown properties (to OGM) are involved. 
+expected=We could envision offering a option overridable per entity and maybe even per property to up the standard and be extra conservative.
+explanation=Depending on how MongoDB projection works (today filtered by selectable columns), we could:
+explanation=This is probably only useful for MongoDB (I think Neo4J already does that as we load the whole node already).
+
+
+title=[Neo4J] How to map the traversal API
+explanation=Neo4J has the notion of traversal API which is mapped to Cypher.
+explanation=That being said, you have callbacks to implement rules on the traversal.
+expected=Explore how to map that in the JPA world OGM exposes. 
+explanation=Native query and some hints?
+explanation=I don't know enough of the feature yet to tell how precisely.  
+
+title=Add support for Fongo to MongoDB backend
+explanation=Fongo is an in-memory fake implementation of MongoDB. 
+explanation=It's an interesting alternative backend for testing an OGM application targetting MongoDB.
+expected=The required changes should be minimal; 
+expected=The MongoDBDialect should work as is (provided Fongo does implement everything we need), only a new provider class would be needed (or the existing one to be updated to support both backend types).
+explanation=Forum reference: <link>
+
+
+title=[Neo4J] Provide alternatives ways to map collections
+current=Currently, we map a list as nodes connected to the owner node.
+expected=We should provide an option via annotations or a global configuration to map list as linked nodes.
+explanation=Using Cypher, it would look something like:<CODE>
+explanation=Note that the two options don't have to be mutually exclusive, you could actually use both at the same time.
+benefit=Mapping list as linked nodes seems a more Graph like solution and it seems that Neo4j is quite good at querying this kind of structure.
+explanation=Something similar might be needed for maps.
+
+
+title=Make sure RESOURCE_LOCAL persistence unit do not require a transaction manager
+current=When working with a non-transactional stores and TX type "RESOURCE_LOCAL" one still needs to provide a JTA implementation atm. 
+explanation=We should explore a custom "OGM local" Transaction implementation to be used in such cases.
+useless=Mailing list: <LINK>
+
+title=MongoDBTupleSnapshot#getColumnNames() does not work correctly for embeddable types
+current=Working on  <LINK>  , I noticed that <CODE> only is implemented correctly for "simple" columns, by just returning the keys of the underlying DBObject.
+expected=For embedded objects we'd have to flatten the affected columns, though. 
+example=for example, we'd have to return column names such as "address.city", "address.street" etc (currently we'd only return "address").
+expected=Also for the id we'd return "_id" (as that's what always is used in MongoDB) 
+expected=but it likely should be the name from the "physical" JPA model for consistency reasons.
+explanation=I'm wondering though whether getColumnNames() really is needed at all. 
+explanation=It is used at some places, but maybe we can circumvent the need for it by always driving the accessal of tuple columns from the "inbound" side, 
+example=for example, based on the model, selected query columns or similar.
+explanation=Note that I didn't find an actual problem caused by the current implementation, it seems to be a consistency issue atm. 
+drawback=There may be an issue when using an embeddable type as optimitic locking version as we access the column names in this case (also see the TODO at <CODE>.
+
+title=Support queries on embedded elements and collections
+expected=We should support queries on embedded elements and collections.
+expected=The former may be done already, that needs to be checked (not sure about all backends). 
+expected=The latter will require some more general ground works: <List>
+
+title=Explore the integration with Hibernate Spatial or spatial4j
+expected=With Hibernate ORM coming, we should look at options to support the Hibernate Spatial and maybe have the JP-QL indexing functions mapped as native functions.
+explanation=IT's split into:
+drawback=On the query side, MongoDB does support geolocation but it's very verbose.
+
+title=Offer an NoSQL alternative to Session.doWork / doReturningWork
+expected=The use case is to be able to execute native code based on the connection to the underlying NoSQL datastore in an isolated fashion.
+expected=We should be able to support a NoSQL specific version of these methods
+
+title=Add support for @OrderBy
+current=We do not yet support ordered collections via @OrderBy.
+expected=I initially thought that'd be handled by ORM internally so we'd benefit from it, but actually the specified order columns are appended to the WHERE clause of the collection fetch statement.
+explanation=We could do the following:
+useless=Thoughts?
+
+title=Support natural id look-ups
+expected=There should be support for <CODE>. 
+current=Currently this causes JDBC-related code to be executed. 
+expected=It would be an optional operation depending on the given store's capabilities
+
+title=Provide Bill-of-Materials POM with matching versions of OGM dependencies and components
+expected=We should provide a Bill-of-Materials POM which defines the versions of our components and dependencies. 
+expected=Users can refer to that BOM POM using the import scope in their dependency management configuration, thus giving them matching versions of all the artifacts listed in the BOM.
+
+title=Add properties to a relationship when mapping an intermediate table in Neo4j
+current=There is not a way in JPA to recognize an entity created to map additional properties to an intermediate table.
+expected=In Neo4j, we could map this entities as relationships with properties (instead of nodes).
+explanation=This requires a discussion about the way a user could map this configuration.
+
+title=Apply type conversion to scalar values loaded from native queries
+explanation=CustomLoader has a concept of ResultRowProcessor/ResultColumnProcessor which for example is used to handle constructor results or type conversions for scalar values. 
+current=As BackendCustomLoader overrides CustomLoader at a very high level, we don't benefit from this (these contracts are JDBC-dependent anyways). 
+expected=We should resemble this pattern to for example correctly load scalar values in a first step.
+
+title=Add support for ObjectId in MongoDB
+current=MongoDB by default uses a 12-byte BSON type with a special structure as document ids:<CODE>
+current=This id is assigned during insert by the driver and comprises parts for timestamp, machine etc. 
+expected=We should support this as a) it is the "natural" way to represent ids in MongoDB and b) in order to facilitate integration with other applications relying on document ids being object ids.
+expected=It should be possible to represent such id in entities as String, ObjectId and probably Long BigInteger.
+
+title=Map joins to associations in Neo4j
+expected=Joins may be leveraged to access associations when loading data from Neo4j. 
+expected=To begin with, we could support NoSQLQuery#addJoin() to map associations navigated in native queries. 
+expected=In a next step, we might try to map joins from JP-QL queries or even JPA 2.1 fetch graphs.
+
+title=Provide API for creating native queries in store-specific representation
+expected=We should have an API which takes native queries in the store-specific representation instead of Strings. 
+benefit=That way one could for example pass a DBObject based query in the case of MongoDB to Hibernate OGM.
+example= for example like so: <CODE>
+
+
+title=Add support for exposing unmapped attributes in a generic manner
+expected=When working with OGM an existing database, it would be very useful to allow to propagate any unmapped attributes of a record/document in a generic container.
+example=Taking a web shop with a Product entity as example, you typically don't need to (or even can) "know" all the attributes of such a product entity but still want to be able to display all the attributes in a generic fashion for example on a web page. 
+explanation=Only a few attributes actually need to be known/mapped in the application itself, namely those fields to which specific handling/logic applies.
+expected=To facilitate such a scenario, one could designate a Map property of an entity to hold any unmapped attribute.
+example=Considering for example the following MongoDB document:<CODE>
+explanation=While the attributes common to every product document are explicitly mapped as properties, all unmapped properties are exposed via the additionalProperties map which is designated for that purpose using a new annotation, for example named @AdditionalProperties. 
+explanation=The application can perform logic on the common known attributes and still forward all unmapped attributes to a generic web view etc.The types of the map values would be those returned from the underlying store.
+benefit=Such a facility would also help with prototype development, where one starts with most attributes not being explicitly mapped and then creates specific members iteratively as application requirements demand.
+benefit=Also the CouchDB dialect would benefit from this, because it doesn't support partial updates at the moment, meaning one currently must map all attributes or an update (which always writes back a complete document) may discard any unmapped attributes.
+
+title=Expose more configuration options for MongoDB
+current=Currently, only the connection timeout and global write concern are configurable for the MongoDB dialect. 
+expected=But there are some more useful options available, in particular the size of the connection pool to be used.
+
+title=Reorganize OGM packages into proper APIs, SPIs and impls
+explanation=As I just learned, Emmanuel's definition of APIs and SPIs is this:<LIST>
+explanation=Whereas to me, an API is something which is used by others (think library), 
+explanation=whereas an SPI is something which is implemented by others (think framework hooks). 
+expected=I like to make this distinction apparent in the packaging, as different rules apply for the evolvements of these things.
+
+title=Offer API for Map / Reduce
+explanation=Apache Gora has an interesting feature. 
+explanation=It offers a Map / Reduce API where the Map interface accepts a specific entity type.
+benefit=It makes for a rather nice and more type-safe API.
+expected=Not all the backends we have in mind support Map Reduce but it could be interesting to explore how we would map such API to the backends we have and see if there is an interest.
+
+
+title=Support entity embedded mode for associations with CouchDB backend
+expected=Similar to MongoDB, it should be configurable how to store associations in CouchDB, either embedded in the entity or in a separate document.
+
+
+title=Add Google Datastore as datastore backend
+explanation=Google App Engine uses Google Datastore underneath. 
+expected=Google Datastore as recently exposed some direct APIs we could bind as dialect
+explanation=<LINK>
+
+title=Implement precedence of configuration options given on different levels
+expected=With  <LINK>  and    <LINK> , it's possible now to define store-specific options on the global, entity and property level. 
+expected=It should be configurable per option type how to proceed if one option is given on more than one level.
+expected=There are cases where a precedence of property over entity over global is useful, but there may be other cases as well. 
+expected=Maybe this should be configured via an annotion on the option type definition?
+
+
+title=Support polymorphic queries on MongoDB
+expected=A query targetting a supertype should return matching subtype entities. 
+current=At least for MongoDB this does not work at the moment when using the table-per-class strategy as only the collection of the addressed entity type is queried.
+
+
+title=Make MongoDB write concern configurable per entity and property
+benefit=With  <LINK>  in place, we can make use of the new configuration facility and see how it works out in practice.
+expected=A good candidate might be the write concern setting for which we already have the required option class and annotation.
+expected=The MongoDB dialect should take the setting into account when executing writes. 
+explanation=Given on the property level, the setting only makes sense for properties representing associations, which are stored in a separate association document.
+
+
+title=Explore use of B+Tree structure for association information
+explanation=Via the cloud-tm project, Fenix has made use of B+Tree structures to improve efficiencies of collections / multiple cardinality associations. 
+expected=The same technique could be applied by OGM.
+
+title=Explore co-location of keys to minimize node involved in transactions and data transfert
+explanation=This is of particular relevance for Infinispan.
+benefit=Via the cloud-tm project, the Fenix framework explored the use of key/data locality to improve the overall performance of the application. 
+explanation=Let's look at their work and see what they have done that can be applied to OGM most likely driven by the options framework currently developed.
+
+
+title=Support formula in OGM
+expected=We could support the notion of formula by doing the following approach. 
+expected=Create an interface that takes a Tuple and return the value of the virtual column.
+
+
+title=Offer ability to load all entities of a given table from GridDialec
+benefit=This is useful for the Hibernate Search mass indexer.
+expected=This also means that we need a loader to build an entity based on a (list of) tuple.
+
+
+title=Consider a option to use same replica reads after writes
+current=Today, we might read stuff after writes and return inconsistent results. 
+expected=We should add an option to force the dialect to use requestStart / requestDone
+explanation=See <LINK>
+
+
+
+title=Should we raise an exception on rollback if the backend does not support transactions?
+expected=To warn the user we could raise a transaction if rollback is called. 
+expected=But we need to make sure this does not have any side effect first.
+
+
+
+
+title=Create facility for OGM core and Dialects to receive custom metadata (annotation, programmatic) associated to entities, properties or associations
+expected=Typically we should be able to transfer the following metadata to the MongoDB driver<CODE>
+expected=The facility should be extensible to make sure a driver can add any necessary custom metadata.
+benefit=A programmatic mapping API would be useful too.
+
+
+title=Make MongoDB's association storage strategy available per association
+expected=Using the new option mechanism, the association storage strategy should be configurable for the MongoDB dialect on a per entity/property base, via annotations and API.
+example=ML reference <LINK>
+
+title=Consider reading/writing directly from BSON stream to Tuple to limit unnecessary object creation (like HashMap) by the MongoDB driver
+explanation=GC can slow down reads esp for collections. 
+explanation=Many HashMap are created and we suspec the MongoDB driver for Java is the creator (DBObject is a subclass of LinkedHashMap).
+expected=We could imagine not create these BObject but directly talk to the BSON stream. 
+explanation=That would of course be a lot of work to do that right and the MongoDB driver needs to expose BSON without parsing it first.
+useless=It more a prospective idea.
+
+title=Add support for the SafeMode
+explanation=Use the org.hibernate.ogm.safemode 
+expected=Should we provide more options to support Majority and Fsync_safe modes as well ?
+explanation=Here is there a description of each mode 
+
+title=Expose in AssociationKey means to embed collections (of embeddable)
+explanation=I am thinking owning entity (or owning EntityKey rather) as well as role. 
+explanation=Even though role is defined at the property level and not at the column name level.
+expected=Ideally add support beyond @elementCollection to be able to denormalize later even true collections. 
+explanation=But retrieving the EntityKey and the role might be tricky
+
+title=Log reasons for performed CRUD / Query operations
+expected=as a follow up to to  <LINK>  , it would be nice to provide as well the comments provided by Hibernate when enabling the option
+explanation=<CODE>
+
+title=Provide OGM specific statistics
+explanation=See and document which of Hibernate Core own statistics make sense
+expected=Make sure that our persisters and loaders properly populate these statistics (if their JDBC version do it)
+expected=If needed add Hibernate OGM specific statistics (new class, subclassing Hibernate Core one?)
+explanation=Unit test them
+
+title=Migrate logging to JBoss Logging
+expected=Today we use SLF4J but we should migrate to JBoss Logging like code does and use the type-safe approach.
+explanation=The idea is to do it in two steps:
+explanation=If someone in the community could at least do the first step, that would be awesome
+
+title=Think about data migration features
+explanation=You can migrate data in two ways:
+expected=The idea is to provide annotations, metadata or callback to migrate data on the fly while OGM loads tuples. 
+explanation=Objectify has this concept <LINK>
+useless=Morphia too (@AfterLoad)
+useless=Thanks for Scott Hernandez for pointing that out.
+
+
+title=Support pure Infinispan client mode for Hibernate OGM
+explanation=There are several levels at play:
+expected=The latest is not fleshed out though and will require refinement.
+
+
+title=Provide a full implementation of the Getting Started
+current=The information provided in the Getting Started is good enough for reading, but one has problems when trying to actually transform that into code. 
+expected=So, it would be nice to provide a full implementation, containing all the configuration files and all sources, to be used as a reference for readers trying to implement the Getting Started.
+
+
+title=Make OGM work on explicit Hibernate Transaction demarcation
+expected=Delegate to a JTA Transaction Manager underneath to get Infinispan behave transactionally. 
+explanation=Use DummyTransactionManager initially as JBoss Tx would require another dependency for the user.
+
+title=Make it possible to grab an existing Infinispan CacheManager via JNDI
+expected=Make it possible to grab an existing Infinispan CacheManager via JNDI, so that multiple applications deployed in the same server can share the same CacheManager, and/or reuse the one being started and configured by the container (Like JBossAS6 provides one).
+
+title=Support more GridTypes
+current=Today we only support basic numeric and string types
+expected=We should support other types like URL, BigDecimal etc
+
+title=Implement support for denormalization of associations
+expected=We can keep the association value on the main entity atomic map, that will reduce the amount of roundtrip necessary to load a graph.
+expected=The Loader and Persister will need to be adapted in consequence.
+expected=Likewise we could do it for Collections but that's more work and would require nested atomicmaps at the ISPN level.
+
+title=Support JPA Criteria query
+expected=That's going to be a biggie but we will need to think about how to support JPA 2 criteria.
+explanation=One approach could be to implement in Hibernate Core or outside a Criteria to JP-QL query translator and then go from here.
+explanation=This is not for the initial deadline
+
+title=Loading a persistence unit with Hibernate seconde level cache, jcache API and Hazelcast Provider causes errors because [CLASS] is not a subtype of [CLASS]
+current=Recently, we have upgraded the version of Hibernate from 4.3.5 to 5.3.7, then we can't launch our project right now in active mode of second level cache with Hazelcast implementation. 
+explanation=Following are some snippets of our related configuration 
+explanation=[CODE]
+explanation=[TRACE]
+explanation=In fact, the class [CLASS] is a concrete class of [CLASS] in the package of [LOC]
+class=bug-1
+
+title=incorrect primary key for audit table of element collection property of entity
+explanation=[CODE]
+explanation=The class Child is any Embeddable. 
+explanation=So the table TestEntity_children has not a primary key. 
+explanation=This may cause the problem.
+explanation=generate this scheme
+explanation=This is wrong. 
+explanation=this cause a children property must have only one element in it. 
+explanation=Or not unique exception will be thrown!
+class=bug-2
+
+title=Commit called without beginning a long transaction
+useless=Hello,
+useless=any idea about this exception ...
+explanation=[EXCEPTION]: commit called without beginning a long transaction
+useless=thanks.
+class=bug-3
+
+title=Hibernate fails on composite PK referencing a subclass in inheritance tree with JOINED strategy
+explanation=[URL]
+class=bug-4
+
+title=Infinispan 2LC inconsistency with localcache
+current=If I configure hibernate-infinispan with "infinispan-local-config.xml" I have 2LC corruptions on rollbacks
+explanation=testcase attached
+class=bug-5
+
+title=Hibernate and Bundle ClassLoaders out of sync on Bundle Refresh
+current=After persistent unit bundles are refreshed, hibernate still use the old class loader, leading to [EXCEPTION].
+explanation=See [URL]
+class=bug-6
+
+title=Adding a detached entity to a managed entity's collection triggers an exception on flush
+explanation=Let's assume we have the following entities: [CODE]
+explanation=Let's persist a tooth and a mouth containing an empty collection of teeth: [CODE]
+explanation=At this point, tooth is detached.
+explanation=Now in a new session, let's retrieve the mooth instance from database and add tooth its teeth collection:[CODE]
+explanation=At this point, if we call em.flush the following exception is thrown: [TRACE]
+class=bug-7
+
+title=[EXCEPTION]: [CLASS] cannot be cast to [CLASS] when deploying to glassfish 4.1 since 4.3.6
+explanation=We have a JSF app that uses JPA and Hibernate which is deployed on Glassfish 4.1. 
+current=It was ok when we used Hibernate 4.3.5. 
+current=After upgrading to 4.3.6, it started to throw the exception during deployment
+explanation=[TRACE]
+class=bug-8
+
+title=Table Exporter Creating Wrong Column For Generated Value with Composite Primary Key
+explanation=[CODE]
+current=When using create-drop, the table generated puts the generated value on the wrong column
+explanation=The problem appears in [CLASS] in [CLASS]
+explanation=This code: [CODE] is not looking for the GeneratedValue identity column but merely the first primary key column.
+expected=This should be getting the column with @GeneratedValue
+class=bug-9
+
+title="Unable to process Jar entry xxx for annotations" while migrating from 5.3.7 to 5.4.0 or 5.4.1
+useless=Hi,
+explanation=we are trying to migrate our project from Hibernate Core 5.3.7  to 5.4.0 or 5.4.1  and Hibernate Search from 5.10.5 to 5.11.0 or 5.11.1
+current=The compilation is OK but at the server Startup we have the below exception.
+explanation=We are running our server with :[LIST]
+useless=Many thanks  for your help,
+explanation=[TRACE]
+class=bug-10
+
+title=wrong schema generate when multi relation of the same entity.
+explanation=[CODE]
+explanation=This code generate this sql:[CODE]
+class=bug-11
+
+title=LobTest and VersionedLobTest fail with MySQL Connector/J 8
+explanation=[METHOD]
+explanation=[TRACE]
+explanation=fails because [METHOD] is null
+explanation=[CODE]
+class=bug-12
+
+title=[FILE] not available yet?
+current=Just wanted to update to Hibernate 5.3.0 Final, but it seems that the eh cache adapter is not released yet (latest available: CR1)?
+useless=Best regards,
+useless=Niko
+class=bug-13
+
+title=JPA Native Query with ordinal parameter not Working
+current=Hi, I've executed the following native query with CTE (common table expression) syntax and positional parameter, but the result returned is always empty.
+explanation=From the trace log printed, hibernate seems to be able to bind the parameter to the correct position but oddly enough the results were never returned. 
+explanation=There's no issue with the SQL as concatenating the value onto the SQL instead of positional parameter is returning the expected results.
+current=p.s. there were no errors thrown when executing the query
+explanation=[CDOE]
+class=bug-14
+
+title=[METHOD] returns null for JPQL query without explicit alias
+explanation=I created a test which demonstrates the issue: [URL]
+explanation=This fails: [CODE]
+explanation=Because [METHOD] returns null although I think it should return the column name "one"
+explanation=Note that the test does not fail when the query is edited to include an explicit alias: [CODE]
+class=bug-15
+
+title=Duplicate generator for specific sequence per table
+explanation=Defining a sequence-based primary key in a base entity with specific sequences per concrete sub-entities used to work in Hibernate 5.2.12. 
+current=After the upgrade Hibernate 5.2.13 we get a [EXCEPTION]
+explanation=Code to reproduce the problem (on any database):[CODE
+class=bug-16
+
+title=Unique constraint violation Exception during insertion sorts
+current=On Hibernate core 5.2.8, When the property hibernate.order_inserts is set to true, hibernate sorts the inserts. 
+current=This sorting logic is adding a new EntityInsertAction which is a duplicate of already existing EntityInsertAction causing the following exception: [EXCEPTION]
+class=bug-17
+
+title=[METHOD] return incorrect value when reader contains special characters.
+current=[METHOD] in the unfinished return value should in the range 0 to 255.
+class=bug-18
+
+title=[EXCEPTION] The index 1 is out of range when executiong Spring Data findAll(Pageable)
+current=When the Spring Data findAll(Pageable) method of an entity is called, the following query is executed by Hibernate: [CODE]
+current=After that the following query is executed:[CODE]
+current=An execption is raised [EXCEPTION]
+class=bug-19
+
+title=Can not cast proxed entity to it actual class
+explanation=Create entities:[CODE]
+explanation=Then create and persist FolderEx entity and File entity like this:[CODE]
+current=After that, if we get File entity by em.find method and get Folder entity by [METHOD] method, than we can't access to [METHOD] method, even with cast: [CODE]
+current=And, if execute this code, we see, that actual instance of folder is FolderEx: [CODE]
+explanation=I attach complete test with this situation
+class=bug-20
+
+title=cannot use enum in jpql, which was able in 5.2.4
+explanation=[CODE]
+current=The code works in 5.2.4, but cannot words in 5.2.6
+class=bug-21
+
+title=[EXCEPTION]: [CLASS] cannot be cast to [CLASS]
+explanation=[TRACE]
+class=bug-22
+
+title=hibernate doesn't shutdown correctly on web container
+current=While trying to do hot-deploy, Hibernate doesn't shutdown correctly keeping classes loaded and not letting us do redeploys.
+explanation=This is particularly bad in a production environment, since we can't always restart tomcat to apply hotfixes to our webapps.
+explanation=Attachaments:[LIST]
+explanation=We upgraded to Hibernate 4.3.8 recently, didn't have this problem on Hibernate 3.6.10
+class=bug-23
+
+title=[EXCEPtION] between [CLASS] and [CLASS]
+explanation=It is similar to [URL], but in other place 
+explanation=[TRACE]
+class=bug-24
+
+title=ForeignKey does not work correctly for OneToOne associations
+current=In some cases the [METHOD] annotation is ignored. 
+explanation=Unit test that reproduces it: [CODE]
+class=bug-25
+
+title=[EXCEPTION] at [CLASS]
+explanation=Java 8's resolution of lambda call sites can result in synthetic classes with no name. 
+current=Therefore when [CODE] on Java 8, [METHOD] can be called with [CODE.
+drawback=This immediately results in NPE.
+explanation=I expect this bug affects 4.2 also, but I haven't tested that.
+class=bug-26
+
+title=[EXCEPTION] at [METHOD]
+explanation=Entity: [CODE]
+explanation=with UserType: [CODE]
+current=This code: [CODE] results in the error below. 
+expected=Perhaps something's amiss with the UserType implementation, however in that case Hibernate should throw appropriate Exception with more information and context regarding the invalid state.
+explanation=[TRACE]
+class=bug-27
+
+title=[EXCEPTION] is thrown with simple parent child relationship
+explanation=Test case shown below:[URL]
+explanation=We have simple parent child relationship.
+explanation=According to hibernate log, update statement is excuted once.
+explanation=But [EXCEPTION] is thrown.
+explanation=[CODE]
+explanation=Also attaching DB sql script.
+class=bug-28
+
+title=[EXCEPTION] DatabaseMetadata use a deprecated method: [METHOD]
+explanation=[CLASS] class call (in the main constructor) a deprecated method: [METHOD]
+explanation=In hibernate 4.3.5, this return null... so SQLException convertion are not working...
+expected=the method [METHOD] should be use instead (see documentation on [METHOD])
+explanation=Full stack trace: [TRACE]
+explanation=To get this exception, i used a Oracle database connection, I called: [METHOD]
+class=bug-29
+
+title=[EXCEPTION] on flush stage
+current=Occasionally a transaction fails on flush stage with Exception like this: [TRACE]
+explanation=Our code in the last line is calling [METHOD]
+explanation=Replication steps are a bit hard to come by, because most of the similar operations work fine, and our software is so complex it's hard to run a one operation exactly the same again. 
+explanation=But considering AIOOBE is often relatively simple error, you might be able to figure it out from the line number alone, I filed it here.
+class=bug-30
+
+title=Leaking connections when unidirectional many to one with [PARAMS]
+current=There are still leaking connections when I use unidirectional one to many collection with orphan removal.
+explanation=Please run patched [FILE] test case to reproduce this situation.
+class=bug-31
+
+title=[ERROR]
+current=When using Terracotta Bigmemory EhCache a NoClassDefFoundError occurs: [TRACE]
+explanation=It comes down to the simple fact that [PARAMS] no longer exists in the [CLASS] class. However [CLASS] still makes use of this [PARAMS] causing it to throw the exception.
+explanation=I have posted work around for this issue on the Terracotta forum which can be found here [URL]
+class=bug-32
+
+title=NPE during compilation with eclipse
+explanation=I have added the jpamodelgen as annotation processor to an ejb project. 
+current=However, when recompiling, not all meta classes are created.  
+current=The processor crashes with a NPE.  
+current=Compiling the project with the same jdk and ant works fine.
+explanation=[TRACE]
+class=bug-33
+
+title=Settings from [PARAMS] are not applied when obtaining an entity manager factory
+current=When obtaining an entity manager factory via [METHOD], properties specified in [PARAMS] are not applied, unlike under ORM 4.2.x.
+class=bug-34
+
+title=Batch update versioned with where clause generates bad SQL
+current=Doing a batch update such as [CODE] generates a [EXCEPTION].
+explanation=[TRACE]
+class=bug-35
+
+title=[EXCEPTION] during schema creationg
+explanation=Hi, I have a entity User that have an [PARAMS] of Address (@Embeddable) with a [PARAMS] of AddressType.
+explanation=I attach the test case.
+explanation=This is the stack trace: [TRACE]
+class=bug-36
+
+title=[CLASS] doesn't honor [PARAMS] correctly
+current=It fails to work when [PARAMS] are annotated with [PARAMS]
+class=bug-37
+
+title=only root level fetch-profile element get processed
+explanation=can be reproduced by [FILE]
+class=bug-38
+
+title=Exception occurs if a class contains multiple annotations for access type
+explanation=As shown via [FILE] when processing [FILE]
+class=bug-39
+
+title=Binder unable to determine correct columns for non-explicit references to PK of joined tables
+explanation=As shown by failure in [FILE]
+class=bug-40
+
+title=[CLASS] is hiding exceptions that are thrown in test class-level methods
+explanation=Fixing this will reveal other exceptions in tests that were previously failing from things in the class methods not being initialized due to these earlier class method exceptions.
+class=bug-41
+
+title=fixing test failures caused by some configuration is not applied to metamodel
+explanation=[FILE]
+class=bug-42
+
+title=Avoid throwing an NPE when Infinispan 2LC custom commands are not found
+current=When custom commands for handling evictions are not find, an NPE is thrown from the Infinispan 2LC:
+explanation=[TRACE]
+useless=This JIRA is to clean this up.
+class=bug-43
+
+title=Map returned by [METHOD] does not include entries for unqualified entity names
+explanation=I see this happening with both HBM XML and annotations.
+class=bug-44
+
+title=Exception when the entities has no @Id but just uses @EmbeddId
+useless=Hardy,
+explanation=the logic of [CODE] is not correct
+current=as subject, if all entities use only @EmbeddId, then this method throws exception.
+explanation=we need find a better way to determin the default access type
+class=bug-45
+
+title=Envers failed to create AUD table with large strings
+current=In my application, Envers failed to create a AUD table for an entity that included a large string property (mapped to a TEXT column in MySQL). 
+current=So the following class failed to generate a AUD table: [CODE]
+current=Once the [FILE] property was modified, the AUD table was created: [CODE]
+class=bug-46
+
+title=Unexpected audit entries when using [METHOD]
+explanation=I have the following object model [CODE]
+explanation=Everything is ok. 
+explanation=I can create an instance of classA with a set of audited classB's.  
+current=WHat is interesting is that if i update ClassA with any other data I get an entry update in the audit table for each entity classB saying an update occurred which is not correct as I only updated classA which is not audited.
+explanation=Please see [URL], also I have attached a small test case
+class=bug-47
+
+title=[EXCEPTION] if [METHOD] is used in WHERE condition on type with no subtype or supertype, ie. a single table (additional test case)
+current=As raised on HHH-10628, there is a problem doing non-polymorphic queries - specifying a single type does not work for a single subtype of a mapped superclass.
+drawback=That means to query single types (or in this case a single table) in general I need a separate type system to decide whether to include the TYPE condition or not (or I cannot generally know whether people add a subclass or not and I therefore need to scan the class path for subclasses, which is not efficient).
+explanation=Running test case gives this error:
+explanation=[TRACE]
+class=bug-48
+
+title=[EXCEPTION]: null at [METHOD]
+current=With the following code: [CODE] I get this error:[TRACE]
+expected=I may have a mistake with my code, however Hibernate should throw a more descriptive exception with explanation rather than a plain [EXCEPTION], in order to assist the developer to fix their code.
+class=bug-49
+
+title=Wrong "jsdk.jar" referenced in the tutorial
+current=The problem appears again (as described in #HHH-2755) at [URL]
+class=bug-50
+
+title=[METHOD] does not work as documented on detached objects
+current=When calling saveOrUpdate on a detached object it performs a save and not an update. 
+explanation=The updated is performed if the object is attached to the session. 
+explanation=The Hibernate 5.2 documentation states that saveOrUpdate performs a reattach.
+explanation=I am including the files to reproduce the issue. 
+class=bug-51
+
+title=Cache71Dialect error
+useless=Hello.
+explanation=I'm moving my application to run in wildfly 10.
+current=I found an error which I believe is due to very old version of dialect. 
+explanation="DROP not supported as a after-use action for global temp table strategy"
+explanation=I use JavaEE 7 with Intersystems Cache.
+current=Currently my application is set up with the dialect [FILE] and this occurs the following trace: [TRACE]
+class=bug-52
+
+title=Exception thrown by JOIN query when package names starts with "in"
+explanation=[URL]
+current=Facing issue with JOIN Query if the following Entity is preset in a package starting within.
+explanation=There are many popular domains like "in", "net.in", "co.in"  would have package starting  "in"
+explanation=however IN also a keyword causes shift-reduce conflict. 
+explanation=To avoid would escape it with a quote of the fully qualified class name of the entity. 
+explanation=Following stack trace [TRACE]
+class=bug-53
+
+title=Temporary session not being closed
+current=In some cases, for example when AssertionFailure "bug adding collection twice" is thrown, temporary session is not being closed.
+explanation=In our case this caused connection pool starvation and application death.
+explanation=I presume, method [METHOD], potentially capable of throwing Exception should be within try/finally block
+class=bug-54
+
+title=Unique constraints fail to apply if at least one contains non unique elements
+current=Applying @Column(unique = true) doesn't lead to an unique constraint being created at database level.
+current=The scenario happens when adding an unique constraint on multiple fields individually and one of them does not have unique fields. 
+drawback= This leads to potential silent data corruption and a constant need to doublecheck the application  since due to HHH-11813: Silent fail of @UniqueConstraintOPEN it’s not reported at all at application level.
+class=bug-55
+
+title=WildFly 15 and up fails with a NPE when executing the following native PostgreSQL query
+useless=Good day
+explanation=I am porting an existing JSF 2.3 application from WildFly 14 to latest WildFly 17. 
+explanation=Using mvn clean package works 100% with zero warnings. 
+current=When I try to deploy the war using a plethora of different methods, all of them fail when trying to setup the Hibernate persistence unit.
+explanation=Code samples below are for WildFly 17
+explanation=Here is my pom file: [CODE]
+class=bug-56
+
+title=Problem in MariaDB implementation
+useless=Hi all
+current=I am currently implementing an application using Hibernate, Spring Boot and MariaDB.
+explanation=The connection to the DB is as follows:[PARAMS]
+explanation=Please note, that the schema name disappeared in the SQL command. 
+explanation=From my point of view, this causes the problem.
+explanation=As my problem got not noticed in the community area, I am opening now this ticket. 
+explanation=Maybe this helps more than just asking a question....
+explanation=The original request is visible here: [URL]
+class=bug-57
+
+title=[PARAMS] doesn't work in native Query if Query is already executed with different parameter value for collection type when new collection length is less than the previous
+current=[PARAMS] doesn't work if Query is already executed with different parameter value for collection type when new collection length is less than the old.
+explanation=[CODE]
+explanation=[TRACE]
+class=bug-58
+
+title=Hibernate transaction can't recover from a DB restart
+current=I think the bug is in [FILE]
+current=if for whatever reason the connection get's closed, the setAutoCommit will throw and exception and the managedConnection isn't reset.
+current=Even retrying to start the transaction will fail because it is bind the the current thread.
+explanation=Solution should be that [CODE] is moved after the catch so the post condition is always that [CODE]
+explanation=[CODE]
+class=bug-59
+
+title=using OPTIMISTIC_FORCE_INCREMENT does not increment the version on [METHOD]
+explanation=In my project I use Wildfly 10 and do the following: [CODE]
+current=the problem is that the version is not incremented on flush but on JTA transaction commit - which means that my dto doesn't have correct version information which is a major problem for me.
+explanation=the same issue is also mentioned here: [URL]
+class=bug-60
+
+title=order by ignored
+current=HQL parsing does not detect abnormal parenthesis, but silently ignores the order by clause instead. 
+explanation=Issue detected on 5.0.2, reproductible on 5.2.6
+explanation=[CODE]
+explanation=maven test case provided, 
+useless=thanks for your help
+class=bug-61
+
+title=JNDI injection not working for OSGI bundles in unmanaged mode
+explanation=We've set up injection as follows: [CODE]
+explanation=And in our hibernate config:[PARAMS]
+explanation=This is results in the error
+explanation=The test case is based on the unmanaged-native osgi demo provided with hibernate. 
+explanation=[TRACE]
+class=bug-62
+
+title=NPE building metadata with two asbtract subclass level
+current=When using MetadataSources and adding an inheritance hierarchy with subclass policy. 
+current=This work fine with a single level, but fails with two or more levels.
+explanation=This following exception is raised: [TRACE]
+class=bug-63
+
+title=[METHOD] cause SQL exception
+current=After upgrade Hibernate from 3.2.0 to 3.6.0, I got following exception with following SQL (converted from HQL): [CODE]
+explanation=[TRACE]
+current=The same SQL can be executed in native Sybase ISQL environment without any error. 
+explanation=The workaround using Sybase11Dilect or modify [METHOD] inside SybaseASE15Dialect to return a smaller number(e.g. 20)
+class=bug-64
+
+title=[EXCEPTION] when trying to delete THIS where [CODE]
+current=The delete fails and throws [EXCEPTION] when trying to issue delete: [CODE]
+explanation=I have three Entities: [CODE]
+explanation=The result is (trace): [TRACE]
+class=bug-65
+
+title=@NamedQuery only works when written on an @Entity class
+expected=It is extremely likely that I would want to add an @NamedQuery annotation to a session bean. 
+current=This does not currently work, since Hibernate annotations only considers @Entity classes.
+class=bug-66
+
+title=[EXCEPTIOn] in [METHOD]
+current=The following exception was thrown when I calling [METHOD]
+explanation=[TRACE]
+explanation=Reference issue: [URL]
+explanation=Steps for reproduce the problem [LIST]
+class=bug-67
+
+title=[EXCEPTION] in [FILE]
+explanation=An argument (beanType) is missing for the debug log at line 128 in JpaCompliantLifecycleStrategy: [CODE]
+explanation=This throws the following error: [TRACE]
+class=bug-68
+
+title=Hibernate doesn't support JPMS module-info class
+explanation=I get this exception: [TRACE]
+class=bug-69
+
+title=xception is thrown by [METHOD] when executing on IBM JDK 8
+current=When using IBM JDK 8 (see Environment details), a [EXCEPTION] exception is thrown by [METHOD] when the following commands are executed to run the Hibernate ORM tests. 
+explanation=[CODE]
+explanation=Stack Trace: [TRACE]
+class=bug-70
+
+title=NPE failures when executing Hibernae ORM TS against IBM JDK 8
+current=Several NPE failures are thrown when executing tests with the following command: [CODE]
+explanation=The following is the list of test methods currently failing due to a NPE: [LIST]
+class=bug-71
+
+title=Test suite execution generates gibberish XML test reports file names
+current=When executing hibernate-orm test suite through the following command: [CODE] a lot of XML test reports are generated with gibberish file names which make their usage really error prone from automation point of view and actually not really human readable.
+example=See the following examples: [LIST]
+class=bug-72
+
+title=Issue with CriteriaBuilder with nested functions
+explanation=I've registered a Postgres  "jsonb_extract_path_text" function  that can extract a specific Json key from JSONB column.
+current=Now trying to apply count aggregate function on it, it produces [EXCEPTIOn], seems that the function schema does not support braces
+explanation=[CODE]
+explanation=[TRACE]
+explanation=I've tested the same implementation with EclipseLink and it did not produce any errors, so I don't believe that this goes against JPA specifications.
+class=bug-73
+
+title=transient field is not accessible
+explanation=I have a legacy code like this:[CODE]
+explanation=Since source field in AbstractEntity is transient it is giving error: [TRACE]
+explanation=It was working fine in Hibernate 4.3.7.
+class=bug-74
+
+title=Potential [EXCEPTION] in [CLASS] while converting [EXCEPTION]
+current=In the [CLASS], the convert([EXCEPTION],String) right now returns null.
+current=The return value is thrown as an exception and may produce [EXCEPTION].
+explanation=This needs to be fixed and the respective exception needs to be thrown.
+class=bug-75
+
+title=Error when using Pagination
+current=I was getting an NullPointerException when using a findAll with a pageable. 
+explanation=[CODE]
+explanation=Repository I am calling:[CODE]
+explanation=This is the core of the stack trace below: [TRACE]
+class=bug-76
+
+title=Hibernate should handle a possible null value
+useless=Hi Team,
+explanation=[TRACE]
+class=bug-77

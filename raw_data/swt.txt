@@ -1,0 +1,511 @@
+title=Tooltips not shown for disabled toolbar items on GTK
+current=Disabled toolbar items don't show tooltips when hovered on Linux-GTK.
+example=For example, hover over the Save button on the main toolbar of Eclipse when it is not enabled.
+explanation= I'm running Ubuntu Fiesty Fawn, GTK.
+class=bug
+
+
+title=Allow to run tests with Maven, without OSGi
+expected= It would help to be able to run SWT tests from Maven, with the same command-line as other platform modules (<CODE-command>).
+current=However, those tests are currently failing because Tycho starts an Eclipse RCP application to host those tests, and that's not what expected/required for SWT test suite.
+expected = pom file should be configured to have SWT tests running as plain Java tests
+useless = null
+
+
+title=Add readme for swt.examples
+expected= It would be helpful to add a readme that tells people which classes to run to start the examples.
+
+title=[api] Create functional interface to use Lambda expressions for selection events based on SelectionListener
+current= Unfortunately the addSelectionListener method in Button uses a non-functional interface.
+expected= To use lambdas with SWT Button as event handler for Button I suggest to add a new method to Button called addOnClickListener similar to the following
+explanation= <CODE> 
+explanation = Some links for more information:[URL] [URL]
+
+title=[GTK] Add script to check which dynamic functions are deprecated
+expected= I'm planning to add a script to SWT Tools which, when run, will output a list of deprecated functions based on the contents of <CODE>.
+explanation = Dynamic GTK functions aren't run through the compiler, so no deprecation warning is emitted.
+
+title=SWT Tools: Split Sleak and Spy into separate plugins
+expected= It would be great if it was possible to use the Sleak and Spy tools independently from the rest of the tools plugin.
+example=For example , we could add those tools in our target definitions and use them in the runtime Eclipse.
+current = Right now, depending on <CODE> means depending on JDT which our project does not use.
+explanation = So my suggesting is splitting the <CODE> plugin this way:
+explanation = More things could be split off from <FILE> later as necessary. 
+useless=I have a patch underway for this. 
+useless=Let me know if you have any other suggestions or concern.
+
+
+title=Add a property for the current GTK theme being used
+expected= it would be useful to know which GTK theme is used during an Eclipse session for troubleshooting purposes.
+explanation = when running tests remotely or when helping someone who doesn't know which theme is used, etc.
+example = This could be similar to <CODE>. 
+explanation=I suggest <CODE>. 
+explanation=I think all the native hooks are there already because I can see the name of the theme being retrieved in <CODE>.
+useless=Let me know if you think that's a acceptable idea  
+useless=and if so, I'll start working on a patch!
+
+title=Add color tab to ControlExample
+expected= Add a tab for system and named colors.
+
+title=Add test class for Spinner widget
+expected=Add class <CODE>.
+current = Spinner has no test cases.
+
+
+title=Add support for styling hyperlinks in the Link widget
+current= I'm currently trying to style Eclipse with a Dark theme (by that I mean I want a dark theme for everything).
+drawback = Screenshot with showing hyperlinks I'm unable to style with css.
+expected=I'm adding a screenshot to show what I mean by that if it didn't become clear. 
+explanation=This is on Eclipse 4.3m5 (Build id: I20130204-1400)
+
+title=Load TrueType fonts directly from a file.
+explanation = In AWT a TrueType font file can be loaded directly into a Font object <CODE>
+explanation=This functionality is important with applications that display financial documents because security fonts or MICR fonts are rarely installed on an end-user systems.
+expected=The ability to load a TrueType font file into a <CODE> object, or convert a AWT to a SWT is the feature request.
+
+title=Add a requestLayout method to Control
+expected= Please add a new requestLayout() method to Control, which does essentially the same thing as <CODE> but without the performance problems mentioned by <LINK>
+expected=We should be marking the dirty widgets so that SWT does not need to perform an inefficient exhaustive search through the widget hierarchy.
+expected=Further, we should add javadoc for all other mechanisms which trigger layouts to direct callers to use this new method.
+benefit=The snippet, above, is currently the most efficient and reliable method of triggering layouts in SWT, but most developers are unaware of this. 
+current=Doing a search through the Eclipse code base, I see that most callers are still trying to guess the root widget affected by their change and invoke <CODE>, which is the worst-possible implementation.
+benefit=By making the most-efficient implementation also the easiest to use and documenting it better, it should make it easier to clean this up.
+
+
+title=[Widgets] Add API for multi-touch events and gestures
+explanation= Windows 7 and Snow Leopard <VERSION> have API now for multi-touch events. 
+expected=We should come up with some kind of SWT API to receive these events.
+
+
+title=[GTK3] Port to GTK+ 3
+expected= it would be good to move to GTK+ 3.x where possible.
+expected=Ideally one could build and run with an entirely GTK+ <VERSION> stack. 
+benefit= This may also allow removal of some of the GNOME dependencies that SWT has at present.
+
+title= [API] Disable the move of a shell
+current=Currently, there's no direct way in SWT for disabling the move of a shell, other than using the NO_TRIM style hint, that also removes the titlebar and other other trim styles.
+explanation=However, this can be achieved in gtk (we tested this with gtk2, in CentOs running Metacity) and win32 (with Windows8.1).
+explanation=For gtk, one would have to call the gdk_window_set_functions [1] without the GDK_FUNC_MOVE hint[2], while for Windows one would have to disable the SC_MOVE menu item from the window's menu.
+expected=We were thinking about adding a new style hint to the SWT class and name it NO_MOVE or NOT_MOVABLE.
+useless=What are your thoughts on this? 
+useless=Would you be interested in a contribution?
+useless=Best wishes,
+useless=Alexandra
+
+
+title= [Browser] implement XULRunner 31 support
+expected= As with previous ESRs, support for XULRunner 31 should be added once version 31 gets released.
+
+title=Replace new Boolean with Boolean.valueOf
+example=There are some examples where new Boolean() is used in SWT. 
+explanation=The static accessor <CODE> was added in Java 1.4 to provide access to a flyweight object where a unique identity is not required, and which can in-line in the JIT (object construction only in-lines when it can be proven that the object doesn't escape).
+
+title=Double icon in the dock on OSX
+current=When eclipse starts up it shows a double icon in the dock.  
+current=In addition, there are time when the second icon does not disappear even after eclipse is fully started.
+class=bug
+
+title=ControlExample: should be able to set text for Shell
+expected= The 'Shell' tab of the ControlExample should allow me to set a text for the Shell.
+
+title=[build] Support building libswt-awt-XXXX.so on Solaris/Motif
+expected= If possible, this should be included in the builds.
+current=Currently, it seems that the libswt-awt-XXXX.
+current=so library is not being built for Solaris/Motif.
+
+title=The Control.setBackground doesn't support gradients
+current=Currently we are not able to set gradient as the background for the Controls. 
+current=The gradients are supported by the CTabFolder class only.
+drawback=Therefore we have to create complex workarounds in the code, 
+example= for example, support the gradients via images that is sometimes quite problematic.
+class=1???
+
+title=Add support for 'transparent' colors
+expected= Setting the 'null' as the color value for the Control.setBackground method should be considered as the transparent color and it shouldn't be replaced with any system default color
+
+title=Make it easier to identify GTK version used by SWT (2/3)
+explanation=I don't know of a good way to find out whether SWT uses GTK2 or GTK3 in a running instance of Eclipse.
+expected= Could SWT set a Java property, so that this can be seen in Help then Installation Details? 
+example= For example, <CODE>
+
+title=Image performance optimizations on OS X
+expected= I would like to show an image preview panel, for instance, and there are specific methods in ImageIO that allow me to load very large images and thumbnail them to a target size REALLY fast and with very low memory usage
+benefit=with ImageIO i can thumbnail an image in about 1/4 of a second vs using <CODE> in SWT takes as much as 5+ seconds
+current=I was looking into Image loading, and it appears that the heavy lifting is currently done in ImageData in SWT common.  
+drawback=This means there isn't an obvious way to take advantage of native optimizations like ImageIO (Apple's not Sun's) on OS X.
+
+title=Workbench is automatically brought to front in focus follows mouse mode
+explanation=It is not common for people to use "focus follows mouse" in windows, but I do.  
+current=When I happen to move my mouse over any eclipse window, it is popped to the front of other windows.
+current=To turn on sloppy focus in WinNT, set the following registry var: <CODE>
+current=If it doesn't exist, create it as a DWORD
+current=Then to test, start eclipse and any other window together.  
+current=Make sure the windows overlap, but you can see parts of both windows.  
+current=Now click on the non-eclipse window. 
+current=It'll come to the top.  
+current=Now just move the mouse over the eclipse window, and it will be brought to the front without clicking.  
+useless=Why???  
+expected=Please disable this.  
+expected=It should only come to front when clicked on, like all other apps.
+
+
+
+
+title= Provide ability to handle reopen-events (user clicks dock icon for running application)
+current=On OS X, applications may not show windows while still running. 
+explanation=Usually, there are two options to open a new application window: using the menu bar or clicking the dock icon. 
+explanation=The first one is already supported by SWT 3.7, but not the second one (at least I did not found a possibility). 
+expected=Please add support for these reopen events. 
+current=When clicking on the dock icon and the application shows at least one window, bring it to front. 
+expected=For the case where no application window is visible, we need API to be notified about the dock icon click, so we can show a new window.
+
+title=Support links in StyledText
+expected=StyledText should allow hyperlinks to be specified.
+expected=The links must become active (cursor changes, underlined, colour change) when the mouse is over the link or when the user tabs to the link.  
+expected=Links must be traversable by tabbing.
+expected=There needs to be an event when the link is selected and when the link is activated 
+example= for example, in IE the status bar shows detailed info about the link when the user hovers over it.
+
+title=Spinner should support negative values
+expected=Spinner should allow negative values.
+
+title=[ScrolledComposite] ScrolledComposite page increment should default to size of client area
+expected=ScrolledComposite page increment should default to size of client area
+current=Currently when you try to page increment on a ScrolledComposite, it defaults to a value much smaller than the size of the client area.
+
+
+
+title=Support SWT.TOOL style for shells on the Mac
+expected=Add support for the "SWT.TOOL" style for shells on the Mac.
+current=Currently, TOOL shells look like ordinary shells.
+expected=Would be nice if they could look like for example the font picker.
+
+title=MouseEvent#button, SWT#BUTTON*, and SWT#MOD* should spell out usual mapping
+expected=MouseEvent#button, SWT#BUTTON*, and SWT#MOD* should spell out the commonly used physical mapping of these buttons/keys.
+
+
+title=[10.7] Let Eclipse use the new full-screen support in Lion
+expected=It would be great if Eclipse could count with this new feature in Mac OS X <VERSION>.
+
+
+
+title=Right and center alignment of Text widgets
+current= The styles <CODE> and <CODE> are not handled in the <CODE> method of Text widgets (<CODE>).
+expected= Please add the following code: <CODE>.
+
+title=DCR - alignment in a text widget
+explanation= I am looking for a way to set the string in a text widget right aligned (for example for numbers).
+example= For a <CODE> there exists a function <CODE> 
+expected=There should be something similar for <CODE> to set left / right / center alignment.
+
+title=DCR - Tree.getTopItem/setTopItem
+expected= To better restore the last UI state we would like to have a <CODE> API that works just like the Table API. 
+example= for example based on the current visible items return/set the index of the topmost visible item.
+
+title=StyledText - Cursor should stop blinking when moving
+current= If I hold the "down" button inside a java file, the cursor blinks while moving downward.
+expected= It should only blink when still.
+
+title=Release SWT sources & javadoc in future builds
+expected= Please release SWT sources as a <FILE_TYPE> that we can attach as source in future builds. 
+explanation= It used to be available before.
+explanation= SWT source is not available in <OPERATING_SYSTEM> / <OPERATING_SYSTEM>.
+
+title=Accessible resizing of Views should move/change the Display's Cursor
+explanation= See windows behavior.
+explanation= Go to system menu and choose "Size", then use the arrow keys.
+expected= The Cursor moves, and better yet it changes to indicate the interaction.
+
+title=Moving shell above other shells does not work.
+expected= Help browser on Windows needs to move above all shells, when called to display some help URL.
+current= When the browser window is open it appears on the top, 
+current=but when it is subsequently called to display URLs and move above, it sometimes stays behind other windows 
+current=The browser window runs in a separate process from Eclipse.
+
+title=Create project does not allow creation of folder in its project selection.
+current=To Reproduce:Select File->New Project->Simple
+drawback= Notice that the user cannot create a folder within this dialog.
+expected= It would be quite useful not to have to use the file system to go and create a subfolder.
+current= The fact that eclipse will NOT let you overlap projects exacerbates this problem 
+current= If you want to have one folder to store all your projects, you have to create subfolders within this folder to house the projects 
+explanation= It is this use case which makes would justify the browser having the create folder like many other applications which bring up a directory chooser.
+
+
+
+title=OleControlSite is not powerful enough
+current=OleControlSite class has no functionality to attach events to any COM interface (IUknown) needed.
+expected= It would be great to create in it OleEventSink objects with IUknown of it and GUID of it's event sink and to add API for adding listeners to these sinks.
+current= Now OleEventSink constructor doen't take such parameters, what is more - it  doesn't have a public constructor at all - it restricts developer.
+expected= It is rather easy to do with C++, and with Java wrappers for COM (I used comjni from <URL>), and it is powerful feature to create applications with callbacks.
+
+title=StyledText - remove hardcoded margin
+expected= I would like to see the option to remove the (hardcoded) margin of 2 pixels 
+explanation=I need this as I'm rendering a <CODE> over another <CODE>.
+explanation= A simple <CODE> would do it for me.
+
+title=R4_15_maintenance build failed
+current=R4_15_maintenance build failed with the follow messages:[TRACE]
+explanation=I think it's released to [URL]
+class=bug-1-561468
+
+title=new test fails in build I20200206-1805
+explanation=see [URL]
+current=AllBrowserTests are failing with this error: [TRACE]
+explanation=I don't see any related changes in the SWT code, so probably environment change on Linux test machines?
+class=bug-2-559918
+
+title=Crashes when double clicking JButton on JFrame
+current=Eclipse crashes when I double click a just created JButton on a JFrame. 
+explanation=Tested on 4 computers with same Eclipse and Java versions. 
+explanation=Two of them crash, two of them don't. 
+explanation=To reproduce this issue just install Window Builder, create a new project, new --> Other --> Swing --> JFrame. 
+explanation=I am attaching the crash report. 
+explanation=Happens with Eclipse 2019-06, 2019-09. 
+explanation=Doesn't happen with Eclipse Oxygen.
+class=bug-4-551688
+
+
+title=SWT fails to build with GCC 10
+current=When I try to build the SWT natives with GCC 10 (as is available on Fedora 32) then I get a build failure like this: [TRACE]
+explanation=This appears because of a change where gcc now defaults to a more strict setting concerning multiple declarations, causing such linker errors. 
+explanation=Setting the -fcommon flag restores the old gcc behaviour but a more correct fix IMO would be declaring this variable with "extern"
+class=bug-6-559637
+
+title=Sleak not working with RCP e4
+current=Hi, so Sleak is not working, I tried everything that the internet had to offer on a search for the reasons.
+explanation=I've installed it trought the update-site as discribed here: [URL]
+explanation=I launched eclipse according to the steps also mentoined on the site.
+explanation=But all I get is: "WARNING: Device is not tracking resource allocation"
+explanation=So the phrase "The plug-in monitors all other plug-ins running in its Eclipse environment." did catch my Eye and I put [CODE] in the required plugins. 
+explanation=But nothing changed.
+useless=If it is somehow my fault, the thing that I can do needs to be documented because I am not an RCP beginner but I didn't find any solution.
+class=bug-7-437558
+
+title=SWT error with [ERROR]
+current=I am having the following problem with Linux version SWT.
+explanation=I use Windows 10 WSL Ubuntu Linux version 18.04.2 LTS.
+explanation=Java versions I tested are [CODE]
+explanation=I tested with the following SWT versions;
+explanation= All showing the following stack trace dump [TRACE]
+class=bug-8-549244
+
+title=crash: fatal error in soup_session_feature_detach with WebKitGTK+ >= 1.11.91
+current=With recent versions of WebKitGTK+, Eclipse crashes whenever Javadoc hover help is to be displayed in Java editor.
+explanation=Looks this happens because WebKit doesn't attach a default Authenticate listener and therefore [METHOD] returns 0 in [METHOD].
+explanation=See attached patch for fix.
+explanation=Reproduced with all 3.8, 4.2 and 4.3 versions of SWT.
+class=bug-9-404766
+
+title=Build problems in bug 531634
+current=JUnit test failures are only reproducible on Jenkins and does not happen locally. 
+explanation=I have created this bug for experiments, so that original bug's gerrit is not polluted.
+class=bug-10-546682
+
+title=Eclipse interface size problem with TV monitor
+explanation=Hi, I have a pc with elementary os and on it I have successfully installed Eclipse Neon 4.6.1.
+current=The problem is that the Eclipse GUI, is so great as to make it unusable.
+explanation=My pc is connected with an HDMI cable to the TV as a monitor with a resolution of 1920x1080, so gnome-tweak-tool I changed the scale factor setting it to 2, so make the whole operating system usable.
+current=The problem is that Eclipse does not seem interested in the scaling factor, just whatever it is, the graphical interface of the program remains unchanged, so too large to be used decently.
+explanation=I searched on the forum before posting my problem, but unfortunately they all seem to have the opposite problem to mine, or extremely small icons! 
+explanation=My own concerns rather the fact that the icons and all the eclipse system are so large as to be shelled.
+class=bug-11-506880
+
+title= Text: Compute Size error
+explanation=Open the properties dialog for any package in linux-GTK, note the size of the text fields. 
+explanation=(Path, type, location, last modified).  
+explanation=Last modified is my favourite, nice wrapping.
+explanation=Compare with eclipse R2.0.1 (20020829) if you don't see the problem.
+class=bug-12-24700
+
+title=Locks up when activating task in task list
+current=When activating a certain task in Task List either by clicking on button on left side or choosing right click context menu and selecting "Activate". 
+explanation=It locks up and I get spinning ball. 
+explanation=Have to force eclipse quit with activity monitor. 
+current=When opened after that, it opens to last state it was in before clicking activate.
+explanation=I have about 75 other tasks in task list that work ok when they are activated but this one does not.
+explanation=I tried creating a new task and gave it the same name and it still does it.
+class=bug-13-527200
+
+title=Opening File-import freezes all PC
+explanation=OS Ubuntu 17.10. Run Eclipse CDT 9.3.1, select File->import. file select dialog comes up. computer freezes. 
+explanation=In the log file: [TRACE]
+class=bug-14-526105
+
+title=DND does not work on ExpandBar
+explanation=Similar to: [URL]
+current=Except DND doesn't function if a widget is inside a 'ExpandBar' on GTK3. 
+explanation=I am investigating/working on a fix now.
+class=bug-15-454940
+
+title=Non-latin1 characters not copied into clipboard
+explanation=[CODE]
+current=The line containing var1 can be selected copied into the clipboard (and then pasted elsewhere). 
+current=The line containing var2 doesn't get copied.
+current=Similarly, text from an external source (tested with the gedit text editor) can only be pasted into Eclipse when it doesn't contain any non-latin1 characters.
+explanation=Text file encoding is set to UTF-8.
+class=bug-16-70826
+
+title=Eclipse failed to load on PPC64LE platform
+current=While trying to open eclipse on ppc64le platform the following error occured [TRACE]
+class=bug-17-528299
+
+title=taskitem doesnt work before shell.open()
+explanation=[CODE]
+expected=expected: overlay text "hi" to show over the application icon
+current=result: "hi" is not shown
+explanation=note: it all works if shell.open() is called before item.setOverlayText("hi")
+class=bug-18-305335
+
+title=Build input failure for I20180118-2000
+current=Build input failure for I20180118-2000
+class=bug-20-530014
+
+title=Not able to edit in the Editing support cell when we use DialogCellEditor
+current=We are trying to edit in the textbox for DialogCellEditor, but it shows editable text box somewhere else on the table and on completion and Hit Enter key value does not persist in the table cell.
+explanation=To reproduce the issue please follow below steps: [LIST]
+class=bug-21
+
+title=Wrong text background in Resource properties dialog
+explanation=See attached picture. 
+explanation=That happened on recent 4.16 builds (I see this in I20200316-1800, GTK 3.22.30 on RHEL 7.4).
+explanation=I assume it is a regression from one of bug 561047 commits, probably some usual GTK CSS weirdness.
+class=bug-22
+
+title=The program 'Eclipse' received an X Window System error.
+current=If I try to open the run tab of any bnd.bnd eclipse will crash.
+explanation=this is the console output: [TRACE]
+useless=How can I help to get a usable eclipse (again)...
+class=bug-23
+
+title=JVM crash after connecting Windows Remote Desktop
+explanation=Launch Eclipse on a PC running Windows 10 Pro and open some Java code editors.
+explanation=Then go to another Windows 10 PC and connect to the first PC via the Microsoft Remote Desktop app. 
+explanation=As soon as the connection establishes, Eclipse crashes.
+explanation=This bug appeared also in previous Eclipse versions.
+explanation=Configuration Details [LIST]
+class=bug-24
+
+title=Buggy scroll-pane on left hand side of properties panel
+current=Scroll pane on the left hand size of the properties panel becomes stuck whenever the panel is closed and re-opened. 
+explanation=Seems to get stuck on the item that was last selected in said panel.
+class=bug-25
+
+title=DND drag to table after previous drag threw exception causes SWT native code to hang
+explanation=Mac only. 
+current=After an exception is thrown in a drag from table to table, attempting to drag again will hang the SWT thread in loop that consumes all memory. 
+explanation=Thread stack dump looks like this:[TRACE]
+explanation=Reproducible: Always
+explanation=Steps to Reproduce: [LIST]
+class=bug-26
+
+title=[EXCEPTION] in [METHOD]
+explanation=[TRACE]
+class=bug-27
+
+title=Eclipse hangs on opening source file with very long line
+current=Eclipse hangs if an XML file contains a very long line. 
+explanation=Not sure if this is specific to editing XMLs (probably not) or it occurs with any type of file.
+explanation=Reproducible: Always
+explanation=Steps to Reproduce:[LIST]
+class=bug-28
+
+title=Segmentation fault in [METHOD]
+explanation=This seems to happen near a garbage collection both with hotspot and openj9 VMs.
+explanation=With hotspot, the summary follows - I'll attach the full hs_err.log file.
+explanation=[TRACE]
+class=bug-29
+
+title=[METHOD] can crash with an NPE
+explanation=The cocoa version of TextLayout has these lines in [METHOD]: [CODE]
+explanation=We've received a crash report where an NPE occurred on line 239. 
+explanation=This should mean that it is possible that the "handle" member of the Color object is "null".
+explanation=Does this mean I have disposed an SWT Color somewhere which is still referenced by a style? 
+explanation=Or is the code in [METHOD] supposed to handle this situation?
+class=bug-30
+
+title=Eclipse crashes randomly
+current=Eclipse crashes what seams to be randomly.
+explanation=I suspect it is related to source control when comparing files.
+class=bug-31
+
+title=Crash on focus change with Chinese input method
+explanation=I write a RCP program with eclipse3.8 a long time ago, recently, I upgraded it to eclipse4.13.
+current=Then, I find, When I use input Chinese characters, it always crashes.
+current=But when I use the English input method, it works well.
+explanation= Configuration Details [LIST]
+class=bug-32
+
+title=Application hangs after throwing exception from handleEvent on MAC.
+current=SWT.Selection event works fine for widgets (e.g. for List) - it report about "Unhandled event loop exception" in stdout. 
+explanation=But throving an exception during [METHOD] event handling freezes the application.
+explanation=Not reproduced on Windows.
+class=bug-33
+
+title=Exception access violation
+explanation=A fatal error has been detected by the Java Runtime Environment:[TRACE]
+class=bug-34
+
+title=JVM crash when clicking to edit a cell in properties view
+explanation=I can always reproduce this. 
+current=When I click on a cell in properties view to edit the value it crashes. 
+explanation=I will attach a screenshot with the cell highlighted in red as well as the [FILE] that I get.
+explanation=Looking at the log file it seems to be SWT related.
+explanation=I initially had this with java 1.8.0_201 but I upgraded it to adopt open jdk 11.0.4.11 and I still get it.
+class=bug-35
+
+title=Cannot change value of variables
+current=After updating from 2019-06 to 2019-09 release I cannot longer change the value of a variable during a debug session (gdb).
+class=bug-36
+
+title=DateTime doesn't send selection event
+current=DateTime doesn't send selection event (SWT.Selection) in any way.
+current=It doesn't send selection event when spinner buttons (+/-) clicked.
+current=It doesn't send selection event when text changed and when i paste some text (Ctrl+V).
+drawback=So where is no ability to know about date changed.
+class=bug-37
+
+title=Null pointer exception to invoke [METHOD] because of graphicsContext variable
+current=I am getting a Null Pointer Exception while creating an object of [CLASS] with a Label as a parameter.
+explanation=[CODE]
+explanation=[TRACE]
+class=bug-38
+
+title=[ERROR]: Unhandled event loop exception when using Ctrl+F6, Ctrl+F7, ...
+current=Since the upgrade to 2019-03 the keyboard shortcuts Ctrl+F6, Ctrl+F7, Ctrl+F8, Ctrl+E throw the following error
+explanation=[TRACE]
+class=bug-39
+
+title=Cursor lookup failure causes "No more handles"
+explanation=See [URL] for details.
+explanation=Happens in both the Eclipse provided in the Ubuntu distribution (which is Neon) and in Oxygen downloaded from eclipse.org.
+explanation=I don't know if this is an Eclipse issue or an Ubuntu issue hence tickets filed in both places.
+class=bug-40
+
+title=SWT widgets documentation links fail
+current=When I click on a widget icon on the page [URL] this takes me to a page listing documentation sets, whereas it should take me to a page showing documentation of the widget I clicked on.
+class=bug-41
+
+title=[EXCEPTION] in [METHOD]
+explanation=Happens rarely. 
+explanation=It looks like bundle is null here: [TRACE]
+class=bug-42
+
+title=Combo doesn't render the whole text
+explanation=Go to Preferences/Workspace and look at the "Report unknown project nature as:" combo. 
+current=If set to Warning the last symbol 'g' is not rendered (only small part of it visible).
+class=bug-43
+
+title=SWT error occurred on Eclipse 200405060200
+explanation=I can't reproduce this problem, but I was doing thing something like creating, editing, building, then deleting a file in CDT.
+explanation=Suddenly, I had an error dialog: [TRACE]
+class=bug-44
+
+title=Spy tool throws exception in 3.4
+current=SWT Spy 1.0.1 from the SWT development tools throws a NullPointer exception with eclipse 3.4: [TRACE]
+explanation=Obviously, the a call for the deprecated [METHOD] method does not work correctly any more 
+explanation=[CODE]
+explanation=I exchaged the above code lines with: [CODE]
+explanation=Now everything seems to work fine.
+explanation=Perhaps someone could incoporate this patch in the SWT Spy that can be downloaded at the SWT development tools website?
+useless=Greetings,
+useless=Marcel

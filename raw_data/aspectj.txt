@@ -1,0 +1,1165 @@
+title=Complete relationship information in the structure model
+expected=Complete the set of relationships surfaced by the structure model
+example=for example, including support for declare parents etc.
+useless=Mik you had a document listing the things yet to be done here?
+
+title=memory footprint in weaver
+current=The footprint of the weaver is pretty high even if classes are not woven. 
+current=I use the weaver implementation to weave on a class per class basis in the weaving class loader and observed an immense memory consumption because every class I would like to give to the weaver got parsed and it seems to me that all these parsing information are kept somewhere.
+useless=Is this really necessary?
+expected=Would it be possible to improve the memory footprint somehow?
+expected=Maybe be skipping unnecessary information after the parsing?
+expected=Even much nicer would be if these is a possibility to do fastmatch without parsing the incoming class completely. 
+benefit=That would reduce the number of created objects during dynamic class loading tremendously.
+
+title=build cancel during weaving
+current=The build can not be cancelled during the bytecode weaving stage.
+
+title=-inpath instead of -injars so directories can be passed in.
+current=To utilise the binary weaving capability of aspectj, it is currently necessary to jar up the class files that you want to weave into and pass the jar in on the -injars option to the compiler.  
+drawback=This can be awkward and makes ANT scripts and IDE integration more difficult that it needs to be.
+explanation=It would be nice to replace the -injars option with a -inpath option that could cope with either jar files or directories (having a format very like 'classpath').
+
+title=-Xreweavable should be the default
+expected=In order to facilitate widespread use of LTW we need to ensure code is compiled with ÃÂ¨CXreweavable.
+expected=However we cannot rely on developers to use this flag so it must be the default. 
+current=Unfortunately the current code bloat is unacceptable for large projects.
+
+title=Extend test coverage for aspect libraries and incremental compilation
+expected=Extend our test coverage for binary weaving from aspect libraries and incremental compilation, the two newest areas in the codebase. 
+explanation=Can we leverage our existing suite of tests in some way and exercise them in these new modes?
+
+title=Special case if(false) to not require a dynamic test
+current=FastMatch, the efficient pattern matching for pointcuts on the constant pool, is currently only implemented for the within pointcut.
+expected=I am planning to provide further oimplementations for other pointcuts by release 1.2.
+
+title=Complete implementation of @SuppressAjWarnings
+expected=ensure that @SuppressAJWarnings are indeed suppressed during pointcutoperations.
+explanation=This requires wrapping major pointcut operations with calls to Lint from the associated advice.
+
+title=Improve the extensibility of AspectJ weaver to support PointcutDoctor
+explanation=As seen at AOSD 2007, PointcutDoctor ("web-page-link") is a natual extension of AJDT that helps developers write correct pointcuts.
+explanation=It shows "almost matched" join points for a pointcut, and explains *why* a pointcut doesn't match (or does match) a given join point. 
+expected=The goal of this request is to improve the extensibility of AspectJ weaver so that tools like PointcutDoctor are able to augment the weaving process, and thus, run on top of unmodified AspectJ compiler.
+explanation=The key of this improvement is to allow an extender to add customized ShadowMungers (i.e. subclasses of ShadowMunger) that run in parallel to other ShadowMungers such as Advice. 
+explanation=That is, as an Advice, these additional ShadowMungers will go through each Shadow produced in the weaving process and perform operations defined by the extender.
+useless=We are more than happy to implement these changes and release them as a patch.  
+useless=We greatly appreciate your comments!
+
+title=support annotation value matching
+expected=There is a need sometimes to determine statically (at weave time) whether an annotation has a particular value.
+benefit=If it can be determined at weave time rather than using reflection code within the advice, certain scenarios can be optimized.  
+example=For example, this trace annotation <CODE>
+drawback=Without the ability to match on annotation values statically, if we came across this method and advice <CODE>, we would have to do reflection in the advice just to discover we shouldn't be tracing.
+explanation=If that scenario could be matched entirely statically: <CODE>, then we can avoid weaving the criticalMethod() in the first place.
+
+title= Allow the ltw configuration to be directly specified rather than discovered on the classpath
+current=Currently the property: <CODE> can be set to name the ltw configuration file that the loadtime weaver searches for.
+explanation=The default value is: <FILE> and the weaver searches the classpath for xml files matching any of those three possibilities.
+explanation=A typical override might therefore be: <CODE> 
+current=however the weaver will still only look for it on the classpath.
+drawback=In some environments the ltw user may just want to name the aop config file to use, and not be forced to include it on the classpath.
+expected=We have had the suggestion to make it protocol based, which i like, but for now I would just allow support for "file:". 
+expected=If "file:" is the prefix, it will be treated as direct reference to the file to use, otherwise it will be searched for.
+benefit=This change would mean all existing uses of the override will be fine, but new users will be all to exploit the flexibility of naming their configuration directly.
+ 
+title=Enhance declare error to support type patterns
+current=Currently, declare error only accepts a pointcut expression.
+expected=It would be nice if it also accepted a type pattern.
+example=For example:<CODE>
+expected=It's kind of like compile-time enforcement of interface methods, only I want it to support non-public methods.
+
+title=Type System support annotations optional
+expected=I'm going to make the annotations added to class files to support the AjType reflection system optional.
+explanation=The option '-reflectable' will ensure they are there, but without that option they won't be there. 
+explanation= They are rarely used and increase code size as well as interfere with regular reflection (which is what many systems/frameworks are typically using anyway to look at AspectJ code).
+
+title=upgrade to Java7 (Eclipse 3.7.1)
+expected=we should rebase AspectJ on eclipse 3.7.1 and pickup Java7 support.
+
+title=Develop a benchmark suite for AspectJ runtime and weavetime performance
+expected=We need a standard suite of performance (and memory usage) tests that help us explore both the compile (weave) and runtime performance of AspectJ.
+benefit=This suite can help us measure performance and memory hotspots in 1.2 development, and serve as a basis for tracking release-release performance enhancements.
+
+title= ajc 1.1 rc1 should copy resources similar to java compiler
+current=The ajc compiler does not copy resources (non-java/aspect) files from the source tree to the output.
+drawback=This means that we have to compile first with the aspectj nature disabled, then compile with aspects.
+
+title= Declare warning/error output - more detail required.
+current=At present the declare warning and declare error functionality of the compiler provides no detailed information about what it is in the user code that has led to the generation of the compile-time warning or error. 
+explanation=Consider the following test case <CODE>
+current=When I compile these two files I get the following warning "file-path"
+benefit=which is great if all I want to know is where the offending code is.
+drawback=But not nearly enough if I want to know what it is on the line that is contravening the policy (or policies) that I have specified in my aspect.
+expected=In the above example it would be even more useful if the warning message was something like <file-path>
+expected=For large projects where there is an architectural imperative to reduce or completely remove coupling between certain components declare warning/error would be of far greater use if it could return more detailed info to say *why* not just *where* the desired enforcement rules have been broken.
+
+title=Surface AspectJ parser through ajde
+expected=AJDT (and other IDEs potentially) needs an interface whereby a single compilation unit (as an input stream or an abstraction of that - the content might come from an unsaved editor buffer) can be parsed by AspectJ with respect to a defined classpath / sourcepath, and receive in return a list of compilation errors / warnings existing in the file, together with a structure model for the file content.
+expected=The model may need to be at a lower level than the current asm ajde provides - the dom resulting from the parse may be more appropriate. 
+explanation=This requirement should be firmed up in the next couple of weeks.
+expected=No byte codes should be dumped as a result of this operation, and it needs to happen in as light-weight and efficient a manner as possible. 
+expected=The interface will be called to parse compilation units in AspectJ projects, and also for reconciling during editing.
+
+
+title= [ajdoc] add ajdoc support for inter-type declarations and other declare forms
+current=Currently ajdoc only exposes the "Advises" and "Advised by" relationships from the structure model.
+expected=It needs to support inter-type field and member declarations using a UI similar to how Javadoc presents inherited members.
+expected=It also needs to support the other declare forms: error, warning, soft, parents, and precedence.
+
+title=support ajsym file generation for command line builds
+useless=This has been requested by Ron and several others, 
+benefit=this will enable browsing crosscutting structure (e.g. via the AspectJ Browser) for builds done via the command line or Ant, and possibly via AJDT with some minor extensions to that.
+
+title=allow use of an environment variable to set compiler arguments
+explanation=I'm trying to create a special jsp compilation servlet in Tomcat 4.x that uses the aspectj compiler.
+expected=I can plug in the compiler adapter, but I don't have control of the ant code they use to invoke the compiler, so I'd like to use an environment variable to do this (apparently the only mechanism they do support).
+benefit=I'm doing this so I can pass an aspectpath in to weave aspects into the compiled jsp servlet.
+
+title=weaving information via messages
+useless=Hi,
+explanation=for the dynamic weaving functionality I implemented for the Eclipse runtime Ineed to know which aspect got woven into which class.
+expected=Therefore it would be good if the weaver would generate messages during the bytecode weaving. 
+explanation=Those specialized messages could contain information for the aspect and the class.
+explanation=I implemented a special subclass of Message and added the creation of the message to the BcelAdvice class (a simple test case for this as well).
+explanation=Take a look at the patch for details.
+explanation=I used the <CODE> kind for this to not modify the IMessage interface.
+explanation=It might be better to have a special <CODE> for that, something like "WOVEN".
+explanation=I think there are more places (in addition to <CODE> where this kind of information should be generated, but I am not familiar enough to implement them all.
+
+title=Support SerialVersionUID field if no new fields declared on class
+expected=Erik and Vincenz Braun had an email dialog in which Vincenz recommended a flag to declare a serialVersionUID field with the value of original class when weaving into class files (unless some aspect declared new state on the class, in which case a warning should be issued).  
+benefit=This is necessary for systems using remote invocations.
+
+title= Need better error message for "can't find type"
+current=I have experienced situations where IAJC outputs a message like this at the end of compilation.
+current=[iajc] can't find type <CODE>
+drawback=In my case this was one time highly confusing since I did not expect the class in question to be referred anywhere in the project (I have to date still not located the reference). 
+expected=For such cases, it would be extremely nice if the error message would display WHY it need the class (for example the name of the refering class(es) or aspect(es) possibly with a reasonable cutoff as there is seldom need to list all referals).
+example=So I would like a message like this:<CODE>
+
+title=Avoid clashes in the org.eclipse namespace by renaming our duplicates.
+explanation=We have recently renamed our 'copy' of BCEL to use a different package prefix so that our version never clashes with another version that might be around on a users system.
+explanation=This enhancement is to do the same thing for our 'copy' of the <CODE> code (in the shadows project).
+expected=As part of packaging the shadows project to create the 'jdtcore' jar files (bin and src) we will rename the packages from <CODE> to <CODE>
+benefit=This has a really nice side effect that we can make our version of the compiler accessible in the IDE. 
+benefit=It should now be possible for AJDT to work more closely with it and get features like eager parsing to work.
+explanation=Care will be taken that we don't accidentally make the merge process a nightmare.
+
+title=Add versions to woven class files - enabling better backwards compatibility.
+current=We don't currently include a version in the class files that come out of the weaver.
+drawback=This can cause problems.
+example=For example, if we add a new attribute to a class file in a future version of AspectJ, then that attribute will cause older versions of AspectJ to blow up if they encounter it. 
+expected=If we include a version in the class file we can rev the version number when we add attributes (or change the class file form in another way), and by checking that version number in the weaver we can better determine whether we should fail if we encounter a new attribute (or other change), or if it is safe to continue processing.
+expected=I will add a new WeaverVersion attribute that includes 2 shorts. 
+explanation=Major and Minor:
+
+title=provide more detail in -showWeaveInfo messages
+current=When advice is executed, the object you have to work with is the joinpoint.
+current=This can then be queried to get various information out of it.
+expected=It would be nice, if as part of the weaving you could get hold of the same information. 
+benefit=This is particularly useful in the case of writing a coverage tool.
+explanation=In order to measure where you've been, you have to know all the places you could possibly go.
+explanation=The introduction of the -showWeaveInfo option means that we can record these places, 
+benefit=however, this would be greatly enhanced by providing similar information as to that which is collected as the program is running.
+explanation=The information which would be good is the same as that obtained from <CODE>
+
+title=RFE: Expose withinType for pertypewithin aspects
+explanation=Per type within aspects have a generated field <CODE>.
+explanation=Almost any time I ever use one of them, I'd like to access this field.
+current=Sometimes, for example, for deferred initialization, I have to create a duplicate field that initializes this as such: <CODE>
+expected=It would be nice if there were a method with the signature Class getWithinType() defined on any pertypewithin aspect.
+
+title=Split out the pointcut parser for use standalone
+explanation=Some environments want to use the pointcut parser but not the weaver.
+example=For example, Spring uses the pointcut parser but then may choose to implement weaving via dynamic proxies.
+current=In this situation the <CODE> is overkill as the weaver is not being used
+drawback=and indeed the weaver being in the jar can sometimes cause problems. 
+explanation=Not technical problems, more likely problems related to application system rollout being delayed because approval is needed for a weaver to be deployed rather than just a simple parser.
+
+title=[2.1] Integrate AJDT and Generics
+useless=Hello,
+expected=It seems to me that it could be very useful to integrate AJDT and generics into the 2.1  release as part of the JDT in order to counter dotNET initiative. 
+expected=Actually I think that Java must evolves drastically to face the NET framework, and especially in : simplifying the libraries, improving virtual machine performances, adding new inovative concepts in the language 
+explanation=I know that this is more the Sun process to provide us with such things. 
+explanation=Nevertheless I believe that IBM/OTI can influence the process by providing and populating new libraries(SWT, etc), and concepts(aspects, and generics for instance) 
+useless=best regards
+useless=Xavier
+
+title=Ajde does not support new AspectJ 1.1 compiler options
+current=The <CODE> interface does not yet support the new AspectJ 1.1 compiler options.
+expected=These need to be added to the interface, any old or renamed options deprecated, and then the correct processing needs to happen within Ajde to pass these options to the compiler.
+explanation=This enhancement is needed by the various IDE projects for there AspectJ 1.1 support.
+
+title=retitle warning to "circular {advice} dependency at"
+expected=When writing aspects with cycles in the advice precedence, get warning "circular dependency at {join point}"  should be "circular advice dependency" or "circular advice precedences at {join point} -- reorder the advice in the aspect".
+useless=FWIW,
+example=here's an example of circularity in advice precedence: <CODE>
+explanation=See programming guide for more discussion of circularity in advice precedence.
+
+title= Support for pertype aspect instantiation model
+expected=Provide support for a pertype aspect instantiation model - this is needed (as documented in the <VERSION> release notes) to support designs that require state to be held on a per-type basis (for example, some common logging idioms).
+expected=Some language design work needs to be done to consider the form of pertype. 
+explanation=It could be as the following: 
+ 
+title=Ability to specify prune directories
+explanation=We use Bitkeeper for our source control at my company which creates SCCS directories in our source.
+drawback=These directories confuse the ajc compiler and cause errors. 
+expected=It would be very useful if we could specify directories to prune (besides CVS).
+explanation=As suggested by Wes Isberg, perhaps a syntax like: <COMMAND>
+
+title=xlint warning: match impossible due to args numericity conflict
+current=Some pointcuts will never match because the number of args is specified differently in two places (from signatures and/or args(x)).  
+example=for example, <CODE>
+expected=When weaving advice (but not declare warning), it would be nice to have an XLint warning indicating that the pointcut can never match.
+explanation=Perhaps also optimize away as never matching.
+
+title=-X should output available -X options
+expected=ajc should emit the available -X options on -help or -X request (the latter like java) to get more traffic and feedback on the experimental options.
+
+title=Support for simple dump file
+expected=When the compiler terminates abnormally (exception) or behaves unexpectedly (warning/error/abort) a simple dump of the compiler state should be produced to aid problem diagnosis.
+expected=The content and conditions under which the dump is produced should be configurable by the user but the facility should be enabled by default for exceptions.
+expected=Consequently its inclusion should have negligible impact on compiler performance and footprint.
+expected=The file should be attached to bug reports to give a complete and objective description of the user's environment and support problem resolution where a testcase cannot be provided.
+current=One approach is to write a uniquely name file (using date & time) in the current directory
+example=for example <FILE-TXT> which should be human readable (it can be zipped if large) to allow the user to potentially diagnose their own problems or remove potentially sensitive data before submission.
+expected=It should contain basic information such as AspectJ version, system properties and command line as well as failure information such as _full_ exception stack trace, compiler messages and internal compiler state.
+
+title= Extend aspectjrt.jar manifest with OSGi attributes
+expected=Add OSGi attributes into aspectjrt.jar so that it can be used unmodified in an OSGi environment.
+
+title=Create a jar file that can be used for load-time weaving.
+expected=Several folks have asked for a jar file as part of the aspectj distribution that contains just the subset of <FILE-JAR> needed for load-time weaving.
+explanation=I've got a patch for <FILE-XML> (non-committed) that creates this (<FILE-JAR> - the name could be changed) and have verified that this lighter-weight jar (<NUMBER>MB vs <NUMBER>MB) does indeed contain everything that is needed.
+explanation=Three questions for us to resolve:
+
+title=Some Pointcut PatternNodes are missing getters to traverse syntax tree
+expected=In order to find out which other pointcuts are referenced by a pointcut definition, i need to access the private members of the CflowPointcut, IfPointcut and NotPointcut PatternNodes found in the weaver module.
+current=Unlike the OrPointcut and AndPointcut classes, they are missing the appropriate getter methods.
+
+title=Option to list weaved components
+expected=I've been looking for a feature where the compiler could output a list of classes/methods that had aspects woven into them.
+benefit=That could allow people to see easily what classes were touched by the compiler and serves as good verification for the build 
+explanation=is the only other way to know to test that the aspect is really in place?
+explanation=Diffing against a known file within a build run may then log possible errors ( if method attributes/accesses change, etc. ). 
+benefit=In my case, the actual benefit is that I can use the list to develop my own list of access descriptors. 
+benefit=That way I may use the fully qualified classname and the methodname to add them into my security database. 
+benefit=Using the "Signature" class I can then easily verify access to that method through other means.
+useless=Anyway, I do hope you consider the idea. 
+useless=Thanks for developing such a great tool & functionality. 
+useless=I found AspectJ to be the easiest usable around with the best documentation for newcomers!
+useless=Kind regards,
+useless=Gerard
+
+title= Allow aspectPath to contain directories
+current=The -aspectpath option to the compiler only allows jar or zip files, not directories.
+explanation=But inpath and classpath allow directories.
+benefit=This capability would improve the handling of aspects spanning multiple projects in Eclipse.
+current=AJDT can currently only support jar or zip files on the aspect path, which requires one of the projects to create an outjar instead of writing to the bin directory as usual.
+expected=The iajc ant task could then also be enhanced to support aspectpath directories.
+
+title=Generate and Include Separate Aspect List for LTW
+expected=Given the need to explicitly enumerate aspects that will be applied by load-time weaving, it will be a significant benefit to allow auto-generating this list when building an AspectJ system,
+example=for example, by appending to a defined output file when compiling.
+expected=It would then be very useful if an <FILE-XML> file could reference this as an external file with a list of aspects, so the list can be regenerated without replacing human edited portions of an <FILE-XML> file.
+
+title= support for matching of subclasses of annotated classes
+explanation=I have two classes, Foo and Bar <CODE>
+expected=I would like to have a way to match all subclasses of any class annotated with annotation @Ann.
+current=Currently I can easily match Foo, with @Ann  but I cannot match Bar (unless it is explicitelly annotated with @Ann)
+explanation=The same could apply to methods, for example matching of all the methods wich override a method annotated with some annotation.
+
+title=Support nexted exceptions in weaver/compiler
+explanation=There are a number of places in the weaver where we catch exceptions, for example IOException, and rethrow an application-specific exceptions, for example BCException.
+current=Unfortunately because we need to continue to support JDK <VERSION_NUMBER> we cannot nest the exceptions and so the stack trace is lost.
+expected=We should define a root exception for the weaver and add a constructor to allow nesting: we can use RemoteException as a model.
+
+title=Upgrade to Eclipse 3.1 final JDT compiler level
+expected=updgrade the jdt compiler inside AspectJ to the <VERSION-NUMBER> final level.
+
+title=Complete implemenation of runtime pointcut parsing and matching
+expected=The weaver API for runtime pointcut parsing and matching needs extending for all of the new pointcuts we have added in AJ5.
+explanation=Recommended approach is to implement JavaLangReflectObjectType as a new ReferenceTypeDelegate, and a JavaLangReflectWorld in place of BcelWorld.
+
+title=Improve logging and error reporting in weaver / ajc
+current=For can't find type and related style errors we really don't have enough information in the reports coming from ajc at the moment.
+expected=A flight recorder tracking progress through the key stages of compilation and weaving would be a big help and may well pay for itself in the run up to <VERSION> final.
+
+title=Targetting 1.2.1 runtime when building with the 1.5.0 compiler.
+current=Some products are now shipping <FILE-JAR> from the <VERSION> compiler.  
+expected=We would like the users of these products to benefit from all the latest and greatest enhancements in the tools and compiler when developing their code.
+expected=however, they will need to deploy this code on a runtime containing the <VERSION> aspectjrt.
+explanation=We have made some enhancements in the <VERSION> runtime that affect compatibility 
+expected=one that springs to mind is changing the signature of the code that builds join point objects to save memory at runtime.
+expected=We need to enable users to specify they want to deploy on a back level aspectj
+example=something like a "-ajruntimetarget <VERSION>" option only with a better name
+explanation=this would generate code that ran against the <VERSION> <FILE-JAR>. 
+expected=At the same time I think we should perhaps (if they aren't there already) reinstate the old way of building join point objects so that code targetting a <VERSION> runtime will run happily if it finds a <VERSION> runtime around.
+
+title=Issue version message during load-time weaving
+expected=It would be very useful to know exactly which version of the weaver is being used for LTW.
+expected=An informational message could be issued when each WeavingAdaptor instance is created (it is possible to have multiple versions of AspectJ in a system).
+explanation=This message could be similar to the that issued by "ajc -version".
+
+title=Support  compiler warning for swallowed exception in catch block 
+expected=So many people have asked how to write a declare warning / error to detect empty catch blocks, that this is clearly a desirable feature.
+current=But it's impossible with declare warning / error.
+current=And it's pretty hard in byte code (the old "what's the end of a catch block" problem).
+explanation=But it's not hard if you've got a compiler.
+expected=So why don't we just add a new front-end compiler warning (works only when building from source) on swallowed exceptions.
+expected=This would behave like the existing "undocumentedEmptyBlock" warning, except be specific to catch blocks so that you can turn it on without getting lots of warnings you don't want in many other places.
+
+title=Don't Dump Bytecodes to Syserr in LTW
+current=The load-time weaving system can produce truly massive quantities of output when there's a weaving error, since the system dumps the bytecode to syserr.
+expected=It would be much better to produce an ajcore file and just point to it, or use some other log.
+
+title=iajc should print summary like javac
+expected=The iajc ant task should produce a summary of what it is doing, 
+example=like the javac task does: [javac] Compiling 189 source files to <PATH>
+
+title=Docs page should reference load-time weaving
+expected=the <FILE-PHP> page should list load-time weaving as a topic that is covered in the development environment guide.
+drawback=Several users have been confused about where to find this information
+
+title=Upload aspectj jars to ibiblio
+explanation=Here are the instructions [URL]
+expected=Aspectj <VERSION> jars need to be uploaded, and we should update the release procedure docs to include publishing jars to ibiblio as part of the process.
+
+
+title=Add an option to generate aj-synthetics with true synthetic flag
+current=In a number of cases tools are getting confused over generated aj members that are  "aj-synthetic" but not marked with the synthetic attribute (because in the past, this has upset other tools).
+example=The most recent example was a JAXB posting on the list - by having a perthis() clause in an aspect that matched a type with JAXB 2 annotations the user was no longer able to use JAXB.
+drawback=This is a serious issue, and will prevent the usage of JAXB 2 with any type into which we introduce properties as aj-synthetic members.
+explanation=The JAXB 2 solution to ignore such fields is to annotate them with @XmlTransient, but since the field does not exist in the user program they can't even do this!
+
+title=Support system and user aop.xml configuration files
+explanation=Both AJDT ("web-page-link") and AspectJ ("web-page-link") support the generation of an <FILE-XML> to declare the set of know aspects for LTW.
+explanation=However if the user modifies the file to add options etc then the changes can be over-written.
+expected=There is a need to allow the user to provide their own configuration in a separate file.
+
+title= Allow multiple levels of LTW information
+expected=It would be nice if basic information about load-time weaving (what version of AspectJ is being used, what loaders are doing weaving and what configuration is being used) was available without all of the -verbose information listing of all classes woven or not woven.
+explanation=It's also unfortunate that the flags for weaving level are 2 quite different ones:
+example=Why not something like <CODE>
+
+title=Tracing and Logging Framework
+drawback=With the growing popularity of load-time weaving it is becoming increasing difficult to diagnose complex problems given the limited diagnostic information available: stack trace, verbose output, and dumped byte-code.
+current=For compiler errors it is usually possible for the bug raiser to attach a simple testcase but this is not possible when the problem may concern the environment or integration with middleware.
+expected=I therefore propose we implement a tracing/logging mechanism that will capture low level entry/exit information as well as existing informational messages and route them to one of the existing logging infrastructures such as JDK <VERSION> or Jakarta Commons logging.
+example=see Ron's comment in Bug 150271 "Allow multiple levels of LTW information"
+
+title=Contribution: Support -Xset in Load-Time Weaving Configuration
+expected=I needed this to try out a setting in the pipelined compilation (<CODE>)
+explanation=I was able to verify that it parsed and set an option correctly in the debugger. 
+explanation=I also have included a test that sets all the currently available options.
+
+title=Support stdout/stderr specifications for the ant compiler test step
+expected=For <compile> and <run> steps the expected output can be specified. 
+expected=This should be possible for <ant> as well and allow simplify forked testing. 
+explanation=Most of the support is there is just needs to be fixed and used.
+
+title=Facilitate LTW testing in a custom ClassLoader hierarchy
+current=Currently the suite allows us to test LTW with a single ClassLoader either in process or via Ant fork.
+explanation=In reality AspectJ LTW is used with a variety of application servers each with a more complex ClassLoader hierarchy.
+expected=We need to be able to test these kinds of scenarios using XML-based JUnit testcases without resorting to something like Tomcat.
+
+title=Clarify message for circularDependency
+current=The existing message makes it fairly easy to confuse with a normal Xlint warning case: unorderedAdviceAtShadow.
+expected=I propose adding the prefix circular advice dependency: before this message to make it more clear what's wrong.
+explanation=I've attached a weaver patch with an attempt at clarifying.
+
+title=Trace should use System.identityHashCode, not hashCode
+current=The tracing module uses <CODE> to identify untrusted objects when formatting. 
+expected=I think it would be a little safer and more accurate to use <CODE>.
+benefit=This way the tracing code wouldn't call any application-defined code, and would give a value that can't change if the loader state changes.
+
+title=Problem Diagnosis Guide
+expected=To complement the Programming and Development Environment Guides we need documentation to describe the various PD mechanisms, but new and old, offered by AspectJ. 
+expected=In particular it should emphasize the difference between information provided for the user and that which should be attached to bug reported to enable diagnosis. 
+expected=The features covered should include messages ("-verbose", Xlint etc), ajcore, tracing and LTW dump.
+
+title=Suppress Xlint warnings per @SuppressWarnings
+current=You can configure Xlint warnings via the JDT/Compiler preferences page, even on a per project base
+current=But seemingly you can't use the @SuppressWarnings-Annotation to switch off this warnings for individual locations.
+current=You can only use some standard tokens for this annotation (for example for unchecked generics).
+drawback=This renders some of this warnings almost useless.
+expected=So the request is: make the eclipse java compiler recognize the Xlint warning IDs for @SuppressWarnings
+
+title=Can you make an XML schema or a DTD available for <FILE-XML>
+current=As I was writting an <FILE-XML> file, I found it annoying that there is no XML schema available for it.
+explanation=I am using eclipse to develop my aspect libraries, and I am used to getting context sensitive help and autocompletion on my XML files. 
+expected=It would really speed up the development and avoid error entries if such an XML schema was made available in the distribution, or better on a web server.
+explanation=Note that aspectwerkz had dtds for their config file.
+useless=Thanks,
+useless=Lionel Fradin
+
+title=Parameter annotation matching
+current=AspectJ does not currently support parameter or package annotations.
+expected=We should support parameter annotations.
+explanation=kind of thing you want to do: <CODE>
+
+title=Make checking of aspectjrt.jar existence optional
+explanation=In some environments we can't find the runtime jar as <FILE-JAR> or <FILE-JAR>.
+expected=Rather than put out a warning when the user can do nothing about it, let's make the check optional so it can be deactivated in environments where the user knows what they are doing.
+explanation=New command line option <COMMAND>
+explanation=defaults to true but can be set off via <COMMAND> or in iajc with <COMMAND>
+
+title=split matching and weaving
+expected=The proposal is to split the matching and weaving process. 
+current=Although the pointcut matching is already usable as a standalone entity, it cannot currently be used without also having the weaving code around (and so the entirety of <FILE-JAR> is required).
+current= Also, when the matching is used standalone it still attempts to access the information necessary to determine a match through reflection. 
+expected= It would be better if that were pluggable (perhaps an abstraction over the required information) and then the user could embed it wherever they wish and provide that information however suits their environment.
+explanation=Two use cases need supporting:
+benefit=This second case will enable much neater matching in Eclipse and even sets up the possibility of showing matches *as you type*
+
+title=[plan] aspects can be 'optional' and run depending on available dependencies
+explanation=Some aspect libraries are shipped separately to their dependencies.
+example=For example the spring persistence aspects are separate to the jpa jars.
+drawback=Due to the inclusion of the aspect on the aspect path the user may see errors about the JPA jar missing, even though they weren't actually using JPA in the first place.
+expected=It should be possible to make these aspects optional so that if their dependencies cannot be found they just switch off, since the users code cannot be requiring them anyway.
+expected=Appropriate messages must come out indicating what has happened.
+
+title= Support registering additional dependencies from compilation participants
+explanation=A compilation participant can add new dependencies to a file.
+expected=we should support this in the AjState object and surface it through the AjCompiler
+
+title=Form of declare annotation that removes annotations
+explanation=Unlike removing entries from a type hierarchy, removing annotations is far less dangerous and addresses some use cases.
+example=for example, you want to switch from some bunch of annotations to another bunch. 
+expected=So we need something like <CODE> (syntax not yet decided).
+
+title=change message about 'not built reweavable' into an xlint
+current=the message that comes out indicating a type cannot be woven because it has previously been built (deliberately) in not-reweavable mode is currently a hard error. 
+expected=We should make it an xlint (defaulting to error).
+
+title= construction of entire aspects using aop.xml
+current=Currently the ability to customize aspects in <FILE-XML> is quite limited.
+current=Basically for some abstract aspect with an abstract pointcut, the XML can concretize the pointcut.
+current=This still requires the user to have used the AspectJ compiler to build the abstract aspect. 
+expected=It might be nice if that need to use the AspectJ compiler was not necessary in common cases.
+
+title= ajc option to change -Xlint level per-message without Xlintfile
+current=The -Xlintfile option is not a great fit for controlling message across multiple build projects, specifically in my case from the pluginManagement section of a maven parent pom.
+current=The problem is that you need a local file to configure the per-message output levels (ignore/warning/error) when you really want to specify it in the build script or in a shared file.
+expected=As an alternative to -Xlintfile, it would be handy to be able to change an Xlint warning level per message using command line options.
+example=For example: <COMMAND> would override the <FILE> file for the adviceDidNotMatch message.
+useless=With Regards
+useless=Rob
+
+title=pertarget.PertargetAspect$ajcMightHaveAspect is implemented by too many objects
+current=When compiling with a pertarget aspect, it seems that suddenly all available classes whatsoever implement the interface <CODE>. 
+drawback=This is certainly too much. 
+expected=Only possible target classes need to implement this (indeed the highest type surfices, subclasses can inherit this implementation).
+benefit=This would reduce code bloat.
+
+title=doc implications of Foo.class
+current=The expression <FILE> is converted by compilers to something like the following in bytecode: <CODE>
+current=As a result, pointcuts matching any of this code will, well, match.
+drawback=Users not familiar with this conversion might be confused,
+expected=so we should document it, likely in a section on the implications of weaving bytecode rather than source code.
+
+title=want xlint message for improper annotation type
+current=When an annotation can only target one kind of thing (for example, a type) but is used to modify something else in a pointcut (e.g., a method),
+expected=it would be nice if the compiler emitted an error, 
+explanation=since the two situations can be confusingly similar: <CODE>
+
+title=Lazy instantiation of thisJoinPoint
+current=In cases where the body of advice refers to a non-statically evaluable portion of thisJoinPoint (so that it can't be optimized by the compiler to thisJoinPointStaticPart),the JoinPoint object is currently always created before entering the advice body - even if the JoinPoint object would never actually be accessed (because of a test within the advice for example).
+explanation=Since: thisJoinPoint is often used in tracing applications
+expected=it would be nice if there was a way to create JoinPoint objects lazily on first actual reference within the advice body.
+
+title=performance improvements for runtime library
+explanation=I am heavily using the runtime signature information from <CODE> and the <CODE> method of it.
+drawback=This causes heavy String operations each time the toString method is called.
+expected=Would it be possible to cache the resulting string for example in MethodSignatureImpl and similar classes for other signatures?
+
+title=implement string-handle based asm API
+benefit=This will enable Eclipse/JDT integration (and other IDE containment hierarchy integration) as well as playing better with incremental model updates.
+ 
+title= ajdoc should generate relative links between crosscutting relationships
+expected=This is a limitation of the original ajdoc that should be removed in the new ajdoc.
+drawback=Without it the generated documentation can not be moved within or across filesystems unless paths match.
+ 
+title=Structure model enhancements
+expected=Here is a list of the stucture that is needed: [LIST]
+ 
+title= API for seeing join point shadows
+expected=Provide an API for seeing join point shadows that are matched by one or more pointcuts
+ 
+title=AJDoc: should be able to set encoding like javadoc
+current=ajdoc doesn't support the -encoding -docencoding and -charset options of javadoc.
+current=Especially, it doesn't pass on the -encoding to ajc.
+drawback=If your project uses a source file encoding (for example, UTF-8) differing form the platform standard, and some java identifiers use characters byond the standard ASCII range, you won't be able to use ajdoc at all.
+ 
+title= [ajdoc] update ajdoc to support Java 5 language features
+expected=Java 5 langauge features such as enums and annotations need to be supported by ajdoc.
+ 
+title=Request for a new type of relationship in the structure model
+current=Declare soft relationships are currently 'advises' and 'advised by' relationships.
+expected=Would it be possible to add 'softens' and 'softened by' (or 'softens exception at' and 'exception softened by') relationships to the structure model?
+
+title=Convert website to phoenix look and feel
+expected=This enhancement is to cover spending some time overhauling the AspectJ site to fit in with the phoenix look and feel for the eclipse projects.
+expected=This would include setting up the necessary files to make the dashboard appear correctly for us: [URL]
+explanation=Once prototyped, we can consider moving to it.
+benefit=Importantly, once converted it should be easy to maintain with new news items/plan updates - no unnecessarily funky php editing required.
+ 
+title=SoftException.printStackTrace(..) should print wrapped throwable too
+expected=SoftExceptions should print not only their trace but also that of the wrapped throwable.
+expected=We should be able to set a flag on class initialization whether we are running under <VERSION> and then implement it under <VERSION> using <CODE> and otherwise by direct delegation.
+useless=I can do this fix if we're agreed.
+ 
+title=extend test harness to check extra source locations
+explanation=We just extended IMessage+ to support multiple ISourceLocations for a single message.
+explanation=This was needed for reasonalbe messages in the -Xlint warning for declaring types in call pcds.
+expected= We should extend the harness to check for these when time permits.
+ 
+title=ajdoc should not use the Declaration and SymbolManager classes
+current=In order to speed up porting to the old HTML generation code ajdoc continues to use the following classes:
+drawback=These funtion only as a wrapper to the ASM, and are not needed.
+expected=The next refactoring effort should get rid of them (and all those static methods as well!).
+ 
+title=Support modifiers and attributes in type patterns
+expected=I would like to be able to use a public modifier in type patterns, to only pick out public types.
+expected=This should also allow public to pick out only types with default access.
+expected=This would add public _TypePattern_ to the grammar for TypePatterns.
+example=For example, in: <CODE>
+expected=I'd like to use public * in that staticinitialization pointcut, to restrict the definition of the public interface to include only publicly visible types.
+ 
+title=need common isAspectJSourceFile() method
+current=Checks for files ending in "java" and "aj" are scattered throughout the code.
+expected=These should be replaced with a common API call.
+
+title=Weaving fails when JDK11 is in path with mixed case characters
+current=When our Jenkins tries to weave classes post-compile, AJC fails with the following error: [TRACE]
+explanation=The problem is that Jenkins installs JDKs in directories [URL] and ClassPathManager adds jars as a lowercase version of the path.
+explanation=It will work for Windows, but fails for any case-sensitive file system.
+class=bug-1-548860
+
+title=[REGRESSION] NullpointerException thrown instead of actual exception since 1.9.3
+current=This test case fails since aspectj 1.9.3 (1.9.4 also fails): [URL]
+explanation=It works fine with aspectj 1.9.2. 
+expected=The expectation is that the exception thrown by the aspect arrives in the catch block. 
+current=But instead a NullpointerException is thrown by aspectj without a clear stacktrace that indicates that it comes from aspectj.
+explanation=This happens with openjdk 1.8.0 8u212-b03 and openjdk 13 on ubuntu, thus should not be related to a specific java version.
+explanation=You can debug this directly in the linked github project as the test case should run anywhere. 
+explanation=Just modify the supplied pom.xml to use the aspectj version you desire.
+explanation=The wrong exception caused by the regression is: [TRACE]
+class=bug-2-547808
+
+title=Annotation processing issues
+current=Seen by Oliver but I can't recreate as I can't cleanly import the project to build...
+explanation=spring-data-jpa from [URL]
+explanation=[TRACE]
+class=bug-3-536103
+
+title=Compliance with Java 9 and later
+useless=Hello,
+current=Weaving a jar file using AspectJ v1.9.1, under Java 9 and 10, generates the following code: [CODE]
+current=The execution of this code, under Java 9 and 10, generates the following execption:[TRACE]
+explanation=I have successfully tried to patch the sources of AspectJ so that I can move forward in my work.
+explanation=For your information, I added my patch attachment.
+expected=Could you please take a look at this problem so that AspectJ complies with the specifications of Java 9 and above, concerning the initialization of the "static final" class attributes?
+useless=Thanks in advance.
+class=bug-4-537825
+
+title=AJC issues errors for each non-existing jar file in CLASSPATH
+useless=Submitting per Jim's suggestion. 
+useless=I believe this is already fixed in the CVS tree.
+current=AJC gives errors for each non-existing jar file in CLASSPATH:[CODE]
+class=bug-5-37383
+
+title=error Type mismatch: cannot convert from java.lang.String to java.lang.String
+current=When compiling a binary concrete aspect library (for later LTW) consisting of more than one aspect that performs an ITD on a target class not exposed to the weaver I get the following error: [TRACE]
+current=The error does not oocur if a complete build & weave is performed. 
+explanation=Testcase attached.
+class=bug-6-55341
+
+title=Negative parameter annotation matching not behaving
+explanation=In this program: [CODE]
+current=It is incorrectly advising both constructors.
+class=bug-7-531819
+
+title=Warning "couldn't find aspectjrt.jar on classpath"
+current=The compiler makes this warning if "aspectrt.jar" file has a different name like "aspectrt-1.3.jar", which is the case when compiling with maven.
+class=bug-8-112830
+
+title=Incorrect generic override decp validation when binary weaving
+explanation=Reported on the mailing list with a test project here:[URL]
+current=The problem is that if compiling in a certain order the decp analysis done when binary weaving isn't able to do the right checking.
+explanation=For some reason I can't remember BcelMethods don't have backing generic members.
+explanation=Changing that is a more serious change, for now we'll just handle this in a special case in the decp checking.
+class=bug-9-526734
+
+title=Non synchronized access to WeakHashMap causes infinite loop
+current=The non synchronized access from AjTypeSystem.getAjType(clazz) to a static instance of WeakHashMap may cause an infinite loop at start up in a multi threaded system. 
+current=The thread dump shows that 32 of 33 threads of the application stuck in WeakHashMap.get(Object)
+class=bug-10-269867
+
+title=BcelObjectType: String index out of range: -1
+current=Hello, I'm trying to log method invocations on a commercial tool (TIBCO BusinessWorks) and for the most part, it works.
+current=Unfortunately, some classes trigger the following error in the aspectj weaver: [TRACE]
+explanation=I'll attach the ajcores and the aspects I'm using.
+useless=Thanks in advance, Joao
+class=bug-11-461702
+
+title=Chained advice doesn't get applied on 2nd call to ProceedingJoinPoint#proceed()
+current=When multiple aspects match the same call joinpoint, if one of the aspects calls proceed() more than once, these extra calls skip the other aspects and go directly to the method body.
+current=So, assuming Aspect1 and Aspect2 matching the same method call, if Aspect1 precedes Aspect2, and Aspect1 calls proceed twice, the sequence current aspectj produces is as follows: [CODE]
+expected=While the expected sequence should be:[CODE]
+explanation=I have been able to reproduce this behaviour in an AJDT project and with command line compiling.
+explanation=Attached an AJDT project that shows the described problem.
+class=bug-12-333274
+
+title=DeclareParents reports unnecessarily errors on nested wild types
+current=I'm getting "can't use declare parents to make enum type FooBar implement an interface" errors when using for instance @DeclareMixin("!*Aspect") or @DeclareMixin("(@foo.bar.SomeAnnotation *)")
+explanation=There is smartness in the DeclareParents not to report wild childs but it's only a shallow consideration whereas my wild type is deeply nested under negation and I get an error (or bunch of them) for not good reason.
+explanation=The shallow child instanceof WildTypePattern could be replaced with a visitor (see the attachment)
+explanation=[CODE]
+class=bug-13-542682
+
+title=damaged manifest.mf prevents LTW running from jar
+current=introducing the automatic module name affected the structure in the weaver manifest.mf - preventing launching LTW with -javaagent and aspectjweaver.jar.
+class=bug-14-526382
+
+title=Can lose a super type bound when weaving a type using generics in its declaration
+useless=Raised on the AspectJ mailing list, I've recreated it. 
+explanation=Weaving here: [CODE]
+current=weaving into this with a declare parents to add another interface causes SomeClass to disappear. 
+explanation=This may not be exactly what the user was doing but it does indicate there is a way in which we write out type signatures and damage them. 
+explanation=Maybe he has different cause but it leads to the same problem.
+class=bug-15-486612
+
+title=overweaving can attribute duplicate attributes, one of which will not deserialize correctly
+current=When overweaving it is possible that a class will get a second WeaverState attribute.  
+current=This second one will not be valid (it hasn't been correctly configured).  
+current=This isn't normally a problem because the next thing that happens is that the class is defined to the VM.  
+current=But if *another* weave step occurs, the malformed attribute will cause that weave to fail with this kind of message: [TRACE]
+explanation=The solution is to avoid adding the duplicate when overweaving.
+class=bug-16-352389
+
+title=memory issues with the latest AspectJ enhancements
+useless=Reported on the list.  
+current=Memory problems even with all the latest magic in AspectJ 1.6.7. 
+explanation=See [URL]
+class=bug-17-296734
+
+title=Support Java10
+expected=This is a bug to capture that we should upgrade AspectJ to a recent JDT that includes Java10 support. 
+explanation=This involves upgrading our asm dependency as well, and various places within AspectJ where we list supported Java versions.
+class=1
+
+title=compliance parameter for -1.9
+current=It seems, when setting up the iajc ant task with source/target=1.9 the compliance level is no longer correctly derived and the default of "1.4" is used which fails the compiler with e.g. annotation based aspects.
+current=setting up iajc with compliance="-1.9" does not work, as, in the list of valid options the "-" is missing from 1.9.
+explanation=The attached patch fixes that.
+class=bug-19-520599
+
+title=[JDK9] ajc$preClinit not allowed in static initializer
+current=Seems like the verifier in Java 9 became more strict.
+current=AJC generates code that attempts to initialize static final fields in ajc$preClinit, which is caleed on <clinit>, e.g., [CODE]
+current=Seems like Java 9 doesn't like this and it throws an IllegalAccessError during classloading: [CODE]
+explanation=I believe the only definitive solution, apart from removing the final modifier from ajc generated fields, would be inlining ajc$preClinit.
+class=bug-20-516279
+
+
+title=NullPointerException compiling aspect using @DeclareParents to implement interface
+current=I bumped into this problem when answering a StackOverflow question. 
+explanation=See here for more details: [URL]
+class=bug-21
+
+title=DeclareParents NPE
+current=There is also an adjacent but unrelated problem with with DeclareParents where I got the following NPEs. 
+explanation=These have been lurking at least after 1.8.6 and it affects the 1.9.2 that I've now been switching to it (see also related [URL])
+explanation=[TRACE]
+explanation=This is caused by AcjMemberMaker that uses null instead of UnresolvedType.
+explanation=NONE like the other static methods do.
+explanation=[CODE]
+explanation=I patched only these methods but the NPE awareness of the ResolvedType.conflictingSignature and ResolvedType.compareMemberPrecedence could be enhanced with a non-null parameter assertion although I've seen in couple of places that the null condition is treated silently.
+explanation=Now I'm able to see the real reason which is a matter of another issue/comment.
+class=bug-22
+
+title=threadlocal in weavingadaptor is potential memory leak
+explanation=We have a web app with Spring and AspectJ LTW enabled.
+current=We are encountering:[DESC] error on Tomcat, when restarting application and I think this is referring to the ThreadLocal field declared in  org.aspectj.weaver.tools.WeavingAdaptor.java line 287 on AspectJ 1.7.0.
+useless=Is there any workaround to avoid this leak?
+class=bug-23
+
+title=NullPointerException at org.aspectj.ajdt.internal.core.builder.AjBuildManager.checkRtJar(AjBuildManager.java:1372)
+current=When i try ti run a simple aspectj program from terminal using ant task in build.xml with ajc-1.9.4 (attached the source jar) it throws me the following error.
+explanation=There are so many bugs in NPE but they are not occurred at AjBuildManager.checkRtJar(AjBuildManager.java:1372)
+explanation=This is the latest release i guess and it throws an error.
+useless=kindly help me to come out of this error.
+useless=Regards,
+useless=prashanth.k
+class=bug-24
+
+title=ClassCastException during load time weaving: InstructionHandle cannot be cast to BranchHandle
+current=We're attempting to upgrade AspectJ to 1.9.4 for a large Java server application and we're hitting a ClassCastException during load time weaving:[TRACE]
+current=It occurs while loading a class with multiple annotations in play, with a try / catch / rethrow in the middle of an annotated method.
+explanation=The problem appears to relate to assumptions in [LOC] that are not consistent with behaviour in [LOC]
+class=bug-25
+
+title=weaving classes from signed jar (signer mismatch)
+explanation=[CODE]
+explanation=[TRACE]
+class=bug-26
+
+title=Problems with missing aspect instances for pertypewithin sometimes
+useless=Reported on the mailing list. 
+current=If you use pertypewithin it can't do its job if the aspect can't see (via reflection rules) methods in the affected target.
+expected=I think the visibility needs to be raised as part of applying the pertypewithin behaviour.
+class=1
+
+title= Support is(AbstractType)
+current=AbstractType is not currently supported but seems easy to add (to the type category type pattern is(...)). 
+explanation=This adds it to the list of: class, interface, aspect, inner, anonymous, enum, annotation, final.
+class=1
+
+title=AspectJ internal compiler error - nullpointer at CoreOutputLocationManager.java:300
+explanation=[TRACE]
+class=bug-27
+
+title=Compile error: NoClassDefFoundError thrown: Could not initialize class org.aspectj.weaver.bcel.ClassPathManager$JImageEntry
+current=I get such error when I try to do something in my roo project
+explanation=[TRACE]
+class=bug-28
+
+title=InterTypeFieldBinding.java:122 - NullPointerException
+explanation=[TRACE]
+explanation=I am trying to compile the following:[URL]
+class=bug-29
+
+title=ArrayIndexOutOfBoundsException compiling stream
+explanation=The following is generated on neon.1:[TRACE]
+explanation=The following class triggers this exception:[CODE]
+explanation=I believe it is triggered by compiling the inner.stream()...
+class=bug-30
+
+title=Compilation error on JAVA 8 lambda type inference with AJC 1.8.9
+current=I got a compilation error on AJC 1.8.9 when I use java 8 lambda, but everything is ok on javac.
+explanation=Below is the compilation error info and reproducable code is in attachment:[TRACE]
+class=bug-31
+
+title= ITD in inner class shadowing (already fixed in HEAD)
+explanation=This bug affects 1.1.1 but is fixed in CVS HEAD.
+explanation=The 1.1.1 compiler complains about:[CODE]
+class=bug-32
+
+title=Problems occurred when invoking code from plug-in [LOC]
+current=After installing STS 3.7.3 based on Eclipse Neon 4.6 I get the following exceptions
+explanation=[TRACE]
+class=bug-33
+
+title=NullPointerException and core dump on specific obfuscated inner class
+current=I'm getting a NullPointerException on a specific class during loadtime weaving, which then results in an ajcore dump file. See below for part of the dump.
+explanation=I traced it back to an earlier bug and fix 432874. 
+explanation=In this fix, getOuterClass has been fixed to return null in case the outer class of an obfuscated inner class (no $ in name anymore) cannot be determined. 
+explanation=It seems that now the next step faills where the code tries to access the outerClass object anyway.
+explanation=Workaround is to exclude the class from the weaver.
+explanation=I can provide the specific classes upon request.
+explanation=[TRACE]
+class=bug-34
+
+title= ClassFormatException if LocalVariableTable data cannot be fully read
+current=We stumbled upon the issue that sometimes a fully valid Java class could not be loaded / parsed by the aspectjweaver runtime.
+explanation=After heavy debugging we found out that the issue is a wrong call to "DataInputStream.read(buffer)" where actually the library expects all data to be read into the buffer; "DataInputStream.readFully(buffer)" must be used instead. 
+explanation=The edge case was that the LocalVariableTable of the class lay exactly over the "buffer border" of the wrapping BufferedInputStream. 
+explanation=The read() would not read all data, but returned less (what was left in the byte buffer) and told the underlying BufferedInputStream to load more data from the stream. 
+explanation=As this data actually belonged to the not-fully-read LocalVariableTable any further byte-based evaluation of the class would lead to a ClassFormatException
+explanation=The issue is present at least in aspectjweaver 1.8.6, 1.8.8 and the current git version.
+class=bug-35
+
+title=NullPointerException in [LOC]
+current=During maven build with aspectj-maven-plugin I got the following NullPointerException:
+explanation=[TRACE]
+explanation=From the listed stacktrace it seems to be a bug of the AspectJ compiler or AJDT. 
+explanation=The problem only occurs on Linux (tested with Ubuntu 14.04 and Debian) with Java 8 or Java 7, and with Maven 3.3 and Maven 3.0. The bug does not appear on MacOS.
+explanation=Steps to reproduce the error: [LIST]
+class=bug-36
+
+title=NPE in IntelliJ since 1.8.7
+explanation=Seems the 1.8.7 release broke the integration with IntelliJ IDEA. 
+current=During compilation, I'm getting this exception.
+explanation=Using the Ant compiler works fine for the same project, but we're forced to go back to 1.8.6 in order to be using the IDE.
+explanation=[TRACE]
+class=bug-37
+
+title=Building Roo projects NPE in AnnotationDiscoveryVisitor
+explanation=Just building pet clinic:
+explanation=[TRACE]
+class=bug-38
+
+title=ClassFormatError "invalid modifier 0x8" when trying to make a default method @Loggable
+explanation=I am using JDK 1.8, jcabi-aspects 0.21.1 and AspectJ 1.8.5 in Eclipse Luna SR2. 
+explanation=I build either in Eclipse or with the jcabi-maven-plugin 0.12.
+explanation=I have annotated a default method in an interface as @Loggable. 
+current=After weaving, trying to load that class leads to an error:[ERROR]
+explanation=That's the "static" modifier.
+explanation=I have attached an example. Please compile and try to run java8.aspectsjtest.TheInterfaceTest as a JUnit 4 test.
+class=bug-39
+
+title="declare @field" failing for "final String" fields (see also Bug 327141)
+explanation=[CODE]
+explanation=[TRACE]
+class=bug-40
+
+title=AJC creates class files that cause [EXCEPTION] exceptions when using around advice on default methods in an interface
+current=Compiling an aspect that advises a default method (in JDK 8) with around advice results in an exception at run time.
+explanation=[TRACE]
+explanation=The attached zip file contains the artifacts needed to recreate this bug.
+explanation=[LIST]
+class=bug-41
+
+title=AspectJ Internal Compiler Error
+explanation=[TRACE]
+class=bug-42
+
+title=[EXCEPTION] with generic inter type method declaration
+current=Below snippet produce [EXCEPTION].
+explanation=If I replace line [CODE] with [CODE]
+explanation=[CODE]
+class=bug-43
+
+title=ajdoc fails when run with JDK 7
+explanation=I'm executing ajdoc via Maven and set source, target to 1.7 and complianceLevel to 1.8. 
+current=When running the report generation with JDK 1.7.0_72 or 1.7.0_76, I run into the attached issue. 
+explanation=1.8.0_40 does not lead to the problem. 
+explanation=So, it looks to me as if the JDK 1.7 and 1.8 doclets are not properly identified.
+class=bug-44
+
+title=Asjpect Crashing with Java 1.8 and Weblogic 12.1.3
+explanation=Hi,we recently migrated from java 1.5 and weblogic 9.2.4 to java 1.8 and weblogic 12.1.3 since then the existing aspects stopped working with java 1.8 and weblogic 12.1.3.
+explanation=The same aspects were working fine with java 1.5 and weblogic 12.1.3.
+explanation=I'm attaching the zip with all the aspects and aspectj core file that is being generated.
+explanation=This is very critical for us to deploy the same aspects on java 1.8 and weblogic 12.1.3.
+explanation=My Project Classpath has the following jars [JAR]
+explanation=I do have the following java agent set as JVM argument [JAR]
+explanation=I tried this with various eclipse versions like kepler, luna and mars and its the same issue across all the IDE versions.
+useless=Please assist ASAP.
+useless=Thanks
+useless=Thiru
+class=bug-45
+
+title=Issue Resolving Type with Java 8 Lambda Functions
+current=I get a compiler error from ajc 1.8.6 when I try to compile a Java class making use of lambda functions:[CODE]
+explanation=The code that triggers this error is below. Note that this compiles with the Oracle JDK 1.8.0_60 compiler.
+explanation=[CODE]
+class=bug-46
+
+title=infinite loop during build time weaving when more than 2 aspects in hierarchy at [LOC]
+current=When weaving aspect, which has two base aspects, code from [CODE] goes into an infinite loop.
+explanation=There isn't assignment of boType inside while loop, so if lazyMethodGen doesn't find matching method in direct base class, it stays forewer in while loop, stack trace from build thread
+explanation=[TRACE]
+explanation=I'm attaching simple maven test case and patch working for me.
+class=bug-47
+
+title=[EXCEPTION] after adding project to inpath
+current=when I add my project to [LOC], it report an exception error. 
+explanation=ADJT version:2.2.3
+explanation=Eclipse version:4.3.1
+explanation=[JAR] [JAR]
+explanation=Error log see below.
+explanation=[TRACE]
+class=bug-48
+
+title=Annotation on introduced interface through declareparents causes AspectJ compiler error
+explanation=I'm using @DeclareParents to introduce an interface to certain entites.
+current= The problem is that when I add the following annotation @JsonView(View.Minimal.class) to the introduced interface, I get the following AspectJ compiler error
+explanation=[TRACE]
+class=bug-49
+
+title=Exception in thread "main" [LOC]: Instruction type does not match stack map
+explanation=Exception Details:[TRACE]
+explanation=Code snippet:[CODE]
+class=bug-50
+
+title=[ERROR] calling default method in Java 1.8
+current=The attached Java 1.8 code results in the following exception after compilation with ajc and executing the "Main" class
+explanation=[TRACE]
+class=bug-51
+
+title=File descriptors leak in [METHOD]
+explanation=Undeploying a Webapp leaves open file descriptors if [METHOD] has been used to load any "plugins".
+current=We see this in Hudson when deployed to a Tomcat server
+explanation=[TRACE]
+class=bug-52
+
+title=@Aspect aspect not correctly applied to Java 8 lambda-defined @Beans
+explanation=See Spring Framework issue: [URL]
+class=bug-53
+
+title=matching of generated classes is failing
+explanation=Classes can be generated whilst a JVM is running, for example proxies or those classes that represent lambdas.
+current=When Spring is using AspectJ for matching it can pass these generated classes to AspectJ - AspectJ tries to 'resolve them' by using [METHOD] to access them.
+explanation=That isn't going to work for generated types (and arguably is unnecessary since you already have the class in your hand!).
+explanation=See spring bug [URL]
+class=bug-54
+
+title=Methods incorrectly tagged with ACC_INTERFACE during weave
+useless=Reported via the mailing list (Tim Webster). 
+current=In his setup he was finding methods tagged as interface and it was tripping up code analysis tools.
+class=bug-55
+
+title=Weaving failure with complex generic type
+current=Using aspectjtools 1.7.2 I get the following exception
+explanation=[TRACE]
+explanation=Attached are the classes I try to weave, and my code that does the actual weaving (reproducible also by command line).
+class=bug-56
+
+title=abort ABORT -- ([EXCEPTION]) info cannot be null
+explanation=AspectJ Properties
+explanation=Dump file: ajcore.20150128.121204.163.txt
+explanation=Dump reason: java.lang.IllegalArgumentException
+explanation=Dump on exception: true
+explanation=Dump at exit condition: abort
+explanation=Exception Information 
+explanation=[TRACE]
+class=bug-57
+
+title=BUG - Use of Wrong Operator in String Comparison - [FILE]
+current=We are currently using [JAR] and during veracode analysis, this scanner found this bug in [FILE] (Line 767) in the version 1.6.8, 1.6.9 and 1.8.4 (Line 793): [TRACE]
+explanation=Description: Using '==' to compare two strings for equality or '!=' for inequality actually compares the object references rather than their values. 
+explanation=It is unlikely that this reflects the intended application logic.
+explanation=Recommendations: Use the [METHOD] method to compare strings, not the '==' or '!=' operator.
+useless=is this a false positive?
+useless=Thanks.
+class=bug-58
+
+title=[METHOD] compile problem with -1.8
+current=Similar to other 'well known' local variables like [METHOD], the eclipse 1.8 compiler is complaining that [METHOD] is not initialized when it is a variable that we (AspectJ) look after. 
+explanation=The fix is the same as for [METHOD] et al - just special case this well known variable.  
+explanation=This did not surface in earlier testing because all the thisAspectInstance tests (in the 1.6.12 testsuite) compile with -1.5 - it is only when compiling with -1.8 that the extra checking is done.  
+explanation=I'm copying the 1.6.12 tests into the 1.8.4 suite and having them specify -1.8.
+class=bug-59
+
+title=AspectJ fails to build with Java 8u25
+useless=Hi,
+current=I noticed this compilation error when building AspectJ with Java 8u25:
+explanation=[TRACE]
+explanation=It also fails with Java 8u40-b09. 
+explanation=Java 8u5 worked fine.
+class=bug-60
+
+title=methods using [METHOD] failing to compile
+explanation=[CODE]
+class=bug-61
+
+title=[METHOD] creates wrong index entry for ignored entries
+explanation=The code states:[CODE]
+current=But for ignored entries, the crc(originalBytes) is ALWAYS not equal to the 'crcClass' value (which is ZERO). 
+current=This means that the whole issue of caching simply does not work for the ignored entries.
+explanation=The fix is simple: in [METHOD] the code should ALWAYS calculate the 'crcClass' value on the original bytes, and add the 'crcWeaved' one only for non-ignored ones.
+class=bug-62
+
+title=Abstract aspect hierarchy and annotation style leads to NPE
+explanation=[CODE]
+explanation=gives [TRACE]
+class=bug-63
+
+title=jsr269: annotation processing
+current=If using an annotation processor successfully in a Java project and the project is converted to an AspectJ project, the processor stops working.
+class=bug-64
+
+title=[EXCEPTION] in [FILE]
+explanation=Was originally being tracked as part of bug 375777.  
+explanation=The exception is: [TRACE]
+explanation=There is an attached full trace to that other bug.
+class=bug-65
+
+title=[ERROR] with Java8 but not with Java6
+current=In our Nuclos ERP system (git sources at [URL]), I encounter the following with Java 1.8.0:
+explanation=[TRACE]
+explanation=This was tested against our sources, commit on branch master.
+explanation=Technical it is still the same bug as bug 421307. 
+explanation=However, there is no way to circumvent it, as -XX:-UseSplitVerifier has been removed from the VM.
+class=bug-66
+
+title=AspectJ Internal Error: unable to add stackmap attributes
+explanation=Code example [CODE]
+explanation=Output [TRACE]
+useless=Thanks,
+useless=Danny
+class=bug-67
+
+title=Java 1.8.0: Incorrect setup for a generic type, raw type should not point to raw
+current=In our Nuclos ERP system (git sources at [URL]), I encounter the following with Java 1.8.0
+explanation=[TRACE]
+explanation=This was tested against our sources, commit on branch master.
+class=bug-68
+
+title=Java 1.8.0 problem: Can't ask to parameterize a member of non-generic type
+current=In our Nuclos ERP system (git sources at [URL]), I encounter the following with Java 1.8.0
+explanation=[TRACE]
+class=bug-69
+
+title=[EXCEPTIOn]: E not found - unable to determine URL
+current=After some code changes in our framework I get the following exceptions.
+explanation=Interesting is that it seems to depend on one line of code:[CODE]
+explanation=[TRACE]
+class=bug-70
+
+title=LTW not working when JMX is enabled
+current=When I enable JMX remote management on a JVM along with AspectJ load-time weaving (LTW), our Aspect doesn't appear to get woven in.
+explanation=This are the JVM arguments: [CODE]
+explanation=Note that if I don't enable JMX remote management, the Aspect works fine.
+class=bug-71
+
+title=External pointcut refs not resolved if named pointcut used by declare
+current=Get incorrect error [ERROR] when compiling this code using AJDT 1.1.4/AspectJ 1.1.1: [CODE]
+class=bug-72
+
+title=[EXCEPTION] when multiple threads enter the weaver
+current=I am using AspectJ 1.7.1.  Occasionally I see the following exception, which I believe is related to multiple threads initializing some internal state.
+explanation=[TRACE]
+class=bug-73
+
+title=[EXCEPTION] in [METHOD] when building
+current=Eclipse has this problem compiling my AspectJ project
+explanation=[TRACE]
+explanation=Clean + rebuild does not help -- the problem always reproduces.
+explanation=Building from Maven (mvn install), everything is fine.
+explanation=The following message appears in the Event Log and may be related:
+explanation=[TRACE]
+explanation=I'm unable to provide a sample since it's quite a large project.
+class=bug-74
+
+title=Compilation error on JAVA 8 lambda type inference with AJC 1.8.9
+current=I got a compilation error on AJC 1.8.9 when I use java 8 lambda, but everything is ok on javac.
+explanation=Below is the compilation error info and reproducable code is in attachment: [TRACE]
+class=bug-75
+
+title=An internal error occurred during "Compute launch button tooltip" [ERROR]
+current=Every now and then I see an error popup window with the messsage "An internal error occurred during: Compute launch button tooltip"
+explanation=Ful exception in the log file is: [TRACE]
+class=bug-76
+
+title=Under specific conditions the following error occurs: "[EXCEPTION]: Invalid length 655xx in LocalVariableTable in class file"
+current=While loading class files, after compiling the code below and enabling AspectJ's load time weaving in SpringFramework, the following error occurs: [TRACE]
+explanation=[CODE]
+explanation=Currently the following is known: [LIST]
+explanation=javap results [CODE]
+explanation=error stack trace [TRACE]
+class=bug-77
+
+title=An internal error occurred during: "Initializing Java Tooling"
+explanation=What steps will reproduce the problem? [LIST]
+explanation=Other times I have restarted the workbench this error hasn't happened.
+explanation=Error Details
+explanation=[CODE]
+explanation=[TRACE]
+class=bug-78
+
+title=[EXCEPTION] in [LOC]
+explanation=[TRACE]
+class=bug-79
+
+title=[EXCEPTION] in [LOC]
+explanation=[TRACE]
+class=bug-80
+
+title=Aspectj bug with scala 2.9.0-SNAPSHOT
+current=Aspectj raises an exception when compiling scala 2.9.0 classes.
+explanation=The ajcore is attached to this ticket as well as a maven project to reproduce the bug. 
+explanation=To reproduce: [LIST]
+class=bug-81
+
+title=[EXCEPTION] on startup
+current=I'm seeing occasional (quite rare, actually) exceptions on starting my application (which uses Equinox Weaving to enhance Spring-managed beans at load time). 
+explanation=Can't say for sure if the problem is with AspectJ or Spring. 
+class=bug-82
+
+title=[EXCEPTION] BuilderManager when save any class
+current=When I save an annotated class this fail occurrs (the annotation used is not for aspects).
+explanation=[TRACE]
+explanation=Compile error: [EXCEPTION] thrown: null
+explanation=Reproducible: Always
+explanation=Steps to Reproduce: [LIST]
+class=bug-83
+
+title=[EXCEPTION] problem with handles
+explanation=To reproduce: [LIST]
+explanation=Handle processing problem, the handle is: [TRACE]
+class=bug-84
+
+title=AspectJ Internal Compiler Error on every save of a file in AJ project
+current=Every time i save a file in project an error box is show with text below. 
+explanation=Every time a clean is necessary to fix the error.
+explanation=[TRACE]
+class=bug-85
+
+title=When trying to clean all projects in the workspace I get a stack overflow exception
+explanation=[TRACE]
+explanation=Reproducible: Sometimes
+class=bug-86
+
+title=Wrong packaging of output jar file
+explanation=Steps To Reproduce:[LIST]
+explanation=More information: I tried to understand what is the difference between manually packed jar and Eclipse plugin packed jar, and they look almost the same to me when unpacked again - just the ordering of entries is different. 
+explanation=But maybe I miss something.
+class=bug-87
+
+title=Compile spring-framework-2.5.6, error occurred
+explanation=bug-88
+class=bug-88
+
+title=Exception message box popping up when modifying an aspect (HashMap.java:300)
+explanation=[TRACE]
+explanation=Reproducible: Sometimes
+explanation=Steps to Reproduce:[LIST]
+class=bug-89
+
+title=The following broken code is raising an exception in the compiler
+current=While working on bug 296044, I found that the compiler was throwing an excepiton under this code in default package AnnotAspect.aj
+explanation=[CODE]
+explanation=[TRACE]
+class=bug-90
+
+title=Unhandled exception: [METHOD] should never be called
+explanation=[TRACE]
+explanation=Compile error: [EXCEPTION] thrown: [METHOD] should never be called
+explanation=Reproducible: Sometimes
+explanation=Steps to Reproduce:?
+class=bug-91
+
+title=AJDT 1.5 inheritance handling bug
+explanation=We have simple hierarchy [CODE]
+current=when trying to read LegalClient list have following exception under final AJDT 1.5 for Eclipse 3.3
+explanation=[TRACE]
+explanation=With AJDT ajdt_1.5.0.200705090533_archive.zip all works fine.
+explanation=All AJDT versions for Eclipse 3.2.2 and 3.2.1 works OK, too.
+useless=Whats happens with final AJDT 1.5?!
+useless=Best regards,
+useless=Vladimir Borkovkin
+class=bug-92
+
+title=[EXCEPTION] when using an anonymous inner class in a Aspect
+current=This runtime error occurs when i declare an inter-type method that uses an anonymous inner class.
+explanation=[TRACE]
+explanation=This has to do in part that the aspect and the class being declared on are in different packages.  
+explanation=It looks like the aspect tries to call on the inner class but since Inner classes have a package level visibility we get an access error during runtime.
+explanation=This works when the class and the aspect are in the same package.  
+explanation=I'm not sure if this should even be allowed to compile.
+explanation=I've attached the files i used to produce this error.  Just run the main method on class F.
+class=bug-93
+
+title=AspectJ Compiler fails with [ERROR]
+current=The AspectJ Copmpiler fails with the [ERROR] at the end while compiling java classes (compile time weaving).
+explanation=The Aspect which causes it is an annotated Java class. 
+explanation=It only causes the error, when the [METHOD] Annotation is used.
+explanation=[CODE]
+current=The Error occurs also when weaving a project where the join point does not match.
+explanation=[TRACE]
+class=bug-94
+
+title=Unexpected exception during compilation by AspectJ
+current=When I save my code (CTRL + S) in Eclipse, an exception occured...
+explanation=[CODE]
+explanation=[TRACE]
+class=bug-95
+
+title=Internal compiler error saving changes to aspect
+explanation=[TRACE]
+explanation=Compile error: NullPointerException thrown: null
+class=bug-96

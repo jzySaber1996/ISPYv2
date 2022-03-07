@@ -1,0 +1,743 @@
+title=hadoop utilities need to support provided delegation tokens
+expected=When using the webhdfs:// filesystem (especially from distcp), we need the ability to inject a delegation token rather than webhdfs initialize its own. 
+benefit=This would allow for cross-authentication-zone file system accesses.
+
+
+title=In HDFS, sync() not yet guarantees data available to the new readers
+expected=In the append design doc ([URL]), it says "A reader is guaranteed to be able to read data that was 'flushed' before the reader opened the file"
+explanation=However, this feature is not yet implemented. 
+explanation=Note that the operation 'flushed' is now called "sync".
+
+
+title=proxy to call LDAP for IP lookup and get user ID and directories, validate requested URL 
+benefit=It is easy to manage user accounts using LDAP. 
+expected=by adding support for LDAP, proxy can do IP authorization in a headless fashion.
+explanation=when a user send a request, proxy extract IP address and request PathInfo from the request. 
+explanation=then it searches the LDAP server to get the allowed HDFS root paths given the IP address. 
+explanation=Proxy will match the user request PathInfo with the allowed HDFS root path, return 403 if it could not find a match.
+
+
+title=A stress-test tool for HDFS
+expected=It would be good to have a tool for automatic stress testing HDFS, which would provide IO-intensive load on HDFS cluster.
+expected=The idea is to start the tool, let it run overnight, and then be able to analyze possible failures.
+
+
+title=Add support for variable length block
+current=Currently HDFS supports fixed length blocks. 
+expected=Supporting variable length block will allow new use cases and features to be built on top of HDFS
+
+
+title=Quorum-based protocol for reading and writing edit logs
+current=Currently, one of the weak points of the HA design is that it relies on shared storage such as an NFS filer for the shared edit log. 
+explanation=One alternative that has been proposed is to depend on BookKeeper, a ZooKeeper subproject which provides a highly available replicated edit log on commodity hardware. 
+expected=This JIRA is to implement another alternative, based on a quorum commit protocol, integrated more tightly in HDFS and with the requirements driven only by HDFS's needs rather than more generic use cases. 
+explanation=More details to follow.
+
+
+title=HDFS implementation should throw exceptions defined in AbstractFileSystem
+expected=HDFS implementation [URL] should throw exceptions as defined in AbstractFileSystem. 
+expected=To facilitate this, ClientProtocol should be changed to throw specific exceptions, as defined in AbstractFileSystem.
+
+
+title=Verify datanodes' identities to clients in secure clusters
+current=Currently we use block access tokens to allow datanodes to verify clients' identities, 
+drawback=however we don't have a way for clients to verify the authenticity of the datanodes themselves.
+
+
+title=Add an api to get the visible length of a DFSDataInputStream.
+current=Hflush guarantees that the bytes written before are visible to the new readers. 
+drawback=However, there is no way to get the length of the visible bytes. 
+benefit=The visible length is useful in some applications like SequenceFile.
+
+
+title=HDFS Namenode and Datanode WebUI information needs to be accessible programmatically for scripts
+current=Currently Namenode and Datanode web page needs to be scraped by scripts to get this information. 
+benefit=Having an interface where this structured information is provided, will help building scripts around it.
+
+
+title=Allow long-running Mover tool to login with keytab
+expected=The idea of this jira is to support mover tool the ability to login from a keytab. 
+benefit=That way, the RPC client would re-login from the keytab after expiration, which means the process could remain authenticated indefinitely. 
+expected=With some people wanting to run mover non-stop in "daemon mode", that might be a reasonable feature to add. 
+benefit=Recently balancer has been enhanced using this feature.
+useless=Thanks Zhe Zhang for the offline discussions.
+
+
+title=Provide testing support for DFSClient to drop RPC responses
+expected=We plan to add capability to DFSClient so that the client is able to intentionally drop responses of NameNode RPC calls according to settings in configuration. 
+benefit=In this way we can do better system test for NameNode retry cache, especially when NN failover happens.
+
+
+title=Plugable block id generation
+expected=The idea is to have a way to easily create block id generation engines that may fit a certain purpose. 
+explanation=One of them could be HDFS-898 started by Konstantin, but potentially others.
+explanation=We chatted with Dhruba about this for a while and came up with the following approach:
+explanation=There should be a BlockIDGenerator interface that has following methods:<LIST>
+explanation=First two methods are needed for block generation engines that hold a certain state. 
+explanation=During the restart, when namenode reads the fsimage it will notify generator about all the blocks it reads from the image and during runtime namenode will notify the generator about block removals on file deletion.
+explanation=The instance of the generator will also have a reference to the block registry, the interface that BlockManager implements. 
+explanation=The only method there is _blockExists(Block)_, so that the current random block id generation can be implemented, since it needs to check with the block manager if the id is already present.
+useless=What does the community think about this proposal?
+
+
+title=HDFS 20 append: Lightweight NameNode operation to trigger lease recovery
+current=Currently HBase uses append to trigger the close of HLog during Hlog split. 
+drawback=Append is a very expensive operation, which involves not only NameNode operations but creating a writing pipeline. 
+drawback=If one of datanodes on the pipeline has a problem, this recovery may takes minutes. 
+expected=I'd like implement a lightweight NameNode operation to trigger lease recovery and make HBase to use this instead.
+
+
+title=Provide a stronger data guarantee in the write pipeline
+current=In the current design, if there is a datanode/network failure in the write pipeline, DFSClient will try to remove the failed datanode from the pipeline and then continue writing with the remaining datanodes. 
+current=As a result, the number of datanodes in the pipeline is decreased. 
+drawback=Unfortunately, it is possible that DFSClient may incorrectly remove a healthy datanode but leave the failed datanode in the pipeline because failure detection may be inaccurate under erroneous conditions.
+expected=We propose to have a new mechanism for adding new datanodes to the pipeline in order to provide a stronger data guarantee.
+
+
+title=Adopt JMXJsonServlet into HDFS in order to query statistics
+explanation=HADOOP-7144 added JMXJsonServlet into Common. 
+explanation=It gives the capability to query statistics and metrics exposed via JMX to be queried through HTTP. 
+expected=We adopt this into HDFS. 
+benefit=This provides the alternative solution to HDFS-1874<LINK>.
+
+
+title=Add capability for NFS gateway to reject connections from unprivileged port
+explanation=Many NFS servers have the ability to only accept client connections originating from privileged ports. 
+expected=It would be nice if the HDFS NFS gateway had the same feature.
+
+
+title=DataTransfer Protocol using protobufs
+useless=We've been talking about this for a long time
+expected=would be nice to use something like protobufs or Thrift for some of our wire protocols.
+explanation=I knocked together a prototype of DataTransferProtocol on top of proto bufs that seems to work.
+
+
+title=HA: Autopopulate standby name dirs if they're empty
+current=To setup a SBN we currently format the primary then manually copy the name dirs to the SBN. 
+expected=The SBN should do this automatically. 
+expected=Specifically, on NN startup, if HA with a shared edits dir is configured and populated, if the SBN has empty name dirs it should downloads the image and log from the primary (as an optimization it could copy the logs from the shared dir). 
+expected=If the other NN is still in standby then it should fail to start as it does currently.
+
+
+title=Add support for specifying a static uid/gid mapping for the NFS gateway
+explanation=It's quite reasonable that folks will want to access the HDFS NFS Gateway from client machines where the UIDs/GIDs do not line up with those on the NFS Gateway itself. 
+expected=We should provide a way to map these UIDs/GIDs between the systems.
+
+
+title=HDFS should issue multiple RPCs for listing a large directory
+current=Currently HDFS issues one RPC from the client to the NameNode for listing a directory. 
+drawback=However some directories are large that contain thousands or millions of items. 
+drawback=Listing such large directories in one RPC has a few shortcomings:<LIST>
+expected=I propose to implement a directory listing using multiple RPCs. 
+explanation=Here is the plan:<LIST>
+benefit=This proposal will change the semantics of large directory listing in a sense that listing is no longer an atomic operation if a directory's content is changing while the listing operation is in progress.
+
+
+title=Implement erasure coding as a layer on HDFS
+expected=The goal of this JIRA is to discuss how the cost of raw storage for a HDFS file system can be reduced. 
+drawback=Keeping three copies of the same data is very costly, especially when the size of storage is huge. 
+expected=One idea is to reduce the replication factor and do erasure coding of a set of blocks so that the over probability of failure of a block remains the same as before.
+example=Many forms of error-correcting codes are available, see <LINK>. 
+example=Also, recent research from CMU has described DiskReduce <LINK>.
+expected=My opinion is to discuss implementation strategies that are not part of base HDFS, but is a layer on top of HDFS.
+
+
+title=Intrinsic limits for HDFS files, directories
+expected=Enforce a configurable limit on:<LIST>
+benefit=The intention is to prevent a too-long name or a too-full directory. 
+explanation=This is not about RPC buffers, the length of command lines, etc. 
+explanation=There may be good reasons for those kinds of limits, but that is not the intended scope of this feature. 
+expected=Consequently, a reasonable implementation might be to extend the existing quota checker so that it faults the creation of a name that violates the limits. 
+benefit=This strategy of faulting new creation evades the problem of existing names or directories that violate the limits.
+
+
+title=Serialize NN edits log as avro records
+current=Right now, the edits log is a mishmash of ad-hoc serialization and Writables. 
+expected=Switching it over to Avro records would be really useful for operator tools
+benefit= an "offline edits viewer" would become trivial ("avrocat")
+
+
+title=Create multi-format parser for edits logs file, support binary and XML formats initially
+expected=Create multi-format parser for edits logs file, support binary and XML formats initially.
+expected=Parsing should work from any supported format to any other supported format 
+example=for example, from binary to XML and from XML to binary
+explanation=The binary format is the format used by FSEditLog class to read/write edits file.
+benefit=Primary reason to develop this tool is to help with troubleshooting, the binary format is hard to read and edit (for human troubleshooters).
+benefit=Longer term it could be used to clean up and minimize parsers for fsimage and edits files. 
+explanation=Edits parser OfflineEditsViewer is written in a very similar fashion to OfflineImageViewer. 
+explanation=Next step would be to merge OfflineImageViewer and OfflineEditsViewer and use the result in both FSImage and FSEditLog. 
+explanation=This is subject to change, specifically depending on adoption of avro 
+explanation=which would completely change how objects are serialized as well as provide ways to convert files to different formats
+
+
+
+
+title=Automatic failover support for NN HA
+explanation=HDFS-1623 was the umbrella task for implementation of NN HA capabilities. 
+current=However, it only focused on manually-triggered failover.
+explanation=Given that the HDFS-1623 branch will be merged shortly, I'm opening this JIRA to consolidate/track subtasks for automatic failover support and related improvements.
+
+
+title=Re-factor block access token implementation to conform to the generic Token interface in Common
+benefit=This makes it possible to use block access token as shared key for client-to-datanode authentication over RPC. 
+current=However, access authorization is still based on block access token semantics.
+
+
+title=The NameNode should expose name dir statuses via JMX
+current=We currently display this info on the NN web UI, so users who wish to monitor this must either do it manually or parse HTML. 
+expected=We should publish this information via JMX.
+
+
+title=Umbrella jira for improved HDFS rolling upgrades
+expected=In order to roll a new HDFS release through a large cluster quickly and safely, a few enhancements are needed in HDFS. 
+explanation=An initial High level design document will be attached to this jira, and sub-jiras will itemize the individual tasks.
+
+
+title=Admin command to track file and locations from block id
+expected=A dfsadmin command that allows finding out the file and the locations given a block number will be very useful in debugging production issues. 
+explanation=It may be possible to add this feature to Fsck, instead of creating a new command.
+
+
+title=Add Tracing to HDFS
+expected=Since Google's Dapper paper has shown the benefits of tracing for a large distributed system, it seems like a good time to add tracing to HDFS. 
+explanation=HBase has added tracing using HTrace. 
+expected=I propose that the same can be done within HDFS.
+
+
+title=Add support for encrypting the DataTransferProtocol
+current=Currently all HDFS RPCs performed by NNs/DNs/clients can be optionally encrypted. 
+drawback=However, actual data read or written between DNs and clients (or DNs to DNs) is sent in the clear. 
+expected=When processing sensitive data on a shared cluster, confidentiality of the data read/written from/to HDFS may be desired
+
+
+title=Expose last checkpoint time and transaction stats as JMX metrics
+expected=I think we should expose at least the following:<LIST>
+
+
+title=DataNode Lifeline Protocol: an alternative protocol for reporting DataNode liveness
+expected=This issue proposes introduction of a new feature: the DataNode Lifeline Protocol. 
+explanation=This is an RPC protocol that is responsible for reporting liveness and basic health information about a DataNode to a NameNode. 
+benefit=Compared to the existing heartbeat messages, it is lightweight and not prone to resource contention problems that can harm accurate tracking of DataNode liveness currently. 
+explanation=The attached design document contains more details.
+
+
+title=OIV: add ReverseXML processor which reconstructs an fsimage from an XML file. 
+expected=OIV: add ReverseXML processor which reconstructs an fsimage from an XML file. 
+benefit=This will make it easy to create fsimages for testing, and manually edit fsimages when there is corruption.
+
+
+title=Integration with BookKeeper logging system
+explanation=BookKeeper is a system to reliably log streams of records (<LINK>). 
+explanation=The NameNode is a natural target for such a system for being the metadata repository of the entire file system for HDFS.
+
+
+title=Generalize BlockInfo in preparation of merging HDFS-7285 into trunk and branch-2
+expected=Per offline discussion with Andrew Wang, for easier and cleaner reviewing, we should probably shrink the size of the consolidated HDFS-7285 patch by merging some mechanical changes that are unrelated to EC-specific logic to trunk first. 
+explanation=Those include renaming, subclassing, interfaces, and so forth. 
+explanation=This umbrella JIRA specifically aims to merge code changes around BlockInfo and BlockInfoContiguous back into trunk.
+explanation=The structure of BlockInfo -related classes are shown below:
+
+
+title=Add status NameNode startup to webUI
+current=Currently NameNode WebUI server starts only after the fsimage is loaded, edits are applied and checkpoint is complete. 
+current=Any status related to namenode startin up is available only in the logs. 
+expected=I propose starting the webserver before loading namespace and providing namenode startup information.
+explanation=More details in the next comment.
+
+
+title=Support Archival Storage
+explanation=In most of the Hadoop clusters, as more and more data is stored for longer time, the demand for storage is outstripping the compute. 
+explanation=Hadoop needs a cost effective and easy to manage solution to meet this demand for storage. 
+current=Current solution is: <LIST>
+drawback=This adds along with storage capacity unnecessary compute capacity to the cluster.
+explanation=Hadoop needs a solution to decouple growing storage capacity from compute capacity. 
+expected=Nodes with higher density and less expensive storage with low compute power are becoming available and can be used as cold storage in the clusters. 
+benefit=Based on policy the data from hot storage can be moved to cold storage. 
+benefit=Adding more nodes to the cold storage can grow the storage independent of the compute capacity in the cluster.
+
+
+title=Plugin interface to enable delegation of HDFS authorization assertions
+explanation=When Hbase data, HiveMetaStore data or Search data is accessed via services (Hbase region servers, HiveServer2, Impala, Solr) the services can enforce permissions on corresponding entities (databases, tables, views, columns, search collections, documents). 
+explanation=It is desirable, when the data is accessed directly by users accessing the underlying data files (for example from a MapReduce job), that the permission of the data files map to the permissions of the corresponding data entity (for example table, column family or search collection).
+expected=To enable this we need to have the necessary hooks in place in the NameNode to delegate authorization to an external system that can map HDFS files/directories to data entities and resolve their permissions based on the data entities permissions.
+explanation=I’ll be posting a design proposal in the next few days.
+
+
+title=HDFS scalability with multiple namenodes
+current=HDFS currently uses a single namenode that limits scalability of the cluster. 
+expected=This jira proposes an architecture to scale the nameservice horizontally using multiple namenodes.
+
+
+title=Provide volume management functionality for DataNode
+current=The current management unit in Hadoop is a node, 
+example=for example if a node failed, it will be kicked out and all the data on the node will be replicated.
+expected=As almost all SATA controller support hotplug, we add a new command line interface to datanode, thus it can list, add or remove a volume online, which means we can change a disk without node decommission. 
+benefit=Moreover, if the failed disk still readable and the node has enouth space, it can migrate data on the disks to other disks in the same node.
+explanation=A more detailed design document will be attached.
+explanation=The original version in our lab is implemented against 0.20 datanode directly, 
+explanation=and is it better to implemented it in contrib? 
+useless=Or any other suggestion?
+
+
+title=Add support for HTTPS and swebhdfs to HttpFS
+explanation=HDFS-3987 added HTTPS support to webhdfs, using the new scheme swebhdfs://.
+expected=This JIRA is to add HTTPS support to HttpFS as well as supporting the DelegationTokens required by swebhdfs://
+
+
+title=enable HDFS local reads via mmap
+current=Currently, the short-circuit local read pathway allows HDFS clients to access files directly without going through the DataNode. 
+drawback=However, all of these reads involve a copy at the operating system level, since they rely on the read() / pread() / etc family of kernel interfaces.
+expected=We would like to enable HDFS to read local files via mmap. 
+benefit=This would enable truly zero-copy reads.
+explanation=In the initial implementation, zero-copy reads will only be performed when checksums were disabled. 
+explanation=Later, we can use the DataNode's cache awareness to only perform zero-copy reads when we know that checksum has already been verified.
+
+
+title=nntop: top--like tool for name node users
+expected=In this jira we motivate the need for nntop, a tool that, similarly to what top does in Linux, gives the list of top users of the HDFS name node and gives insight about which users are sending majority of each traffic type to the name node. 
+explanation=This information turns out to be the most critical when the name node is under pressure and the HDFS admin needs to know which user is hammering the name node and with what kind of requests. 
+explanation=Here we present the design of nntop which has been in production at Twitter in the past 10 months. 
+benefit=nntop proved to have low cpu overhead (< 2% in a cluster of 4K nodes), low memory footprint (less than a few MB), and quite efficient for the write path (only two hash lookup for updating a metric).
+
+
+title=Enable Quota Support for Storage Types
+explanation=Phase II of the Heterogeneous storage features have completed by HDFS-6584. 
+expected=This JIRA is opened to enable Quota support of different storage types in terms of storage space usage. 
+explanation=This is more important for certain storage types such as SSD as it is precious and more performant.
+expected=As described in the design doc of HDFS-5682, we plan to add new quotaByStorageType command and new name node RPC protocol for it. 
+explanation=The quota by storage type feature is applied to HDFS directory level similar to traditional HDFS space quota.
+
+
+title=WebHDFS: support file concat
+explanation=In trunk and branch-2, DistributedFileSystem has a new concat(Path trg, Path [] psrcs) method. 
+expected=WebHDFS should support it.
+
+
+title=Add an admin command to trigger an edit log roll
+benefit=This seems like it would also be helpful outside of the context of HA, but especially so given that the standby can currently only read finalized log segments.
+
+
+title=Transparent data at rest encryption
+explanation=Because of privacy and security regulations, for many industries, sensitive data at rest must be in encrypted form. 
+example=For example: the health-care industry (HIPAA regulations), the card payment industry (PCI DSS regulations) or the US government (FISMA regulations).
+expected=This JIRA aims to provide a mechanism to encrypt HDFS data at rest that can be used transparently by any application accessing HDFS via Hadoop Filesystem Java API, Hadoop libhdfs C library, or WebHDFS REST API.
+expected=The resulting implementation should be able to be used in compliance with different regulation requirements.
+
+
+title=Allow long-running Balancer to login with keytab
+expected=From the discussion of HDFS-9698, it might be nice to allow the balancer to run as a daemon and login from a keytab.
+
+
+title=Support hsync in HDFS
+explanation=HDFS-731 implements hsync by default as hflush. 
+expected=As descriibed in HADOOP-6313, the real expected semantics should be "flushes out to all replicas and all replicas have done posix fsync equivalent - for example the OS has flushed it to the disk device (but the disk may have it in its cache)." 
+expected=This jira aims to implement the expected behaviour.
+
+
+title=Record DFS client/cli id with username/kerbros session token in audit log or hdfs client trace log
+current=HDFS usage calculation is commonly calculated by running dfs -dus and group directory usage by user at fix interval. 
+drawback=This approach does not show accurate HDFS usage if a lot of read/write activity of equivalent amount of data happen at fix interval. 
+expected=In order to identify usage of such pattern, the usage calculation could be measured by the bytes read and bytes written in the hdfs client trace log. 
+current=There is currently no association of DFSClient ID or CLI ID to the user or session token emitted by Hadoop hdfs client trace log files. 
+expected=This JIRA is to record DFS Client ID/CLI ID with user name/session token in appropriate place for more precious measuring of HDFS usage.
+
+
+title=Audit logging should log denied accesses
+current=FSNamesystem.java logs an audit log entry when a user successfully accesses the filesystem: <CODE>
+current=but there is no similar log when a user attempts to access the filesystem and is denied due to permissions. 
+explanation=Competing systems do provide such logging of denied access attempts; 
+explanation=we should too.
+
+
+title=Add CLI tool to initialize the shared-edits dir
+current=Currently in order to make a non-HA NN HA, you need to initialize the shared edits dir. 
+current=This can be done manually by cping directories around. 
+expected=It would be preferable to add a "namenode -initializeSharedEdits" command to achieve this same effect.
+
+
+title=Revive number of files listed metrics
+benefit=When namenode becomes unresponsive by HADOOP-4693 (large filelist calls), metrics has been helpful in finding out the cause.
+explanation=When gc time hikes, "FileListed" metrics also hiked.
+explanation=In 0.18, after we fixed "FileListed" metrics so that it shows number of operations instead of number of files listed (HADOOP-3683), I stopped seeing this relationship graph.
+expected=Can we bring back "NumbverOfFilesListed" metrics?
+
+
+title=Fsck security
+explanation=This jira tracks implementation of security for Fsck. 
+expected=Fsck should make an authenticated connection to the namenode.
+
+
+title=HDFS needs to support new rename introduced for FileContext
+explanation=New rename functionality with different semantics to overwrite the existing destination was introduced for use in FileContext. 
+current=Currently the default implementation in FileSystem is not atomic. 
+expected=This change implements atomic rename operation for use by FileContext.
+
+
+title=Add a public API for setting quotas
+current=Currently one can set the quota of a file or directory from the command line, 
+current=but if a user wants to set it programmatically, they need to use DistributedFileSystem, which is annotated <CODE>.
+
+
+title=The number of failed or low-resource volumes the NN can tolerate should be configurable
+current=Currently the number of failed or low-resource volumes the NN can tolerate is effectively hard-coded at 1. 
+expected=It would be nice if this were configurable.
+
+
+title=Add an administrative command to download a copy of the fsimage from the NN
+expected=It would be nice to be able to download a copy of the fsimage from the NN
+example=for example, for backup purposes.
+
+
+title=Offline Namenode fsImage verification
+current=Currently, there is no way to verify that a copy of the fsImage is not corrupt. 
+expected=I propose that we should have an offline tool that loads the fsImage into memory to see if it is usable. 
+benefit=This will allow us to automate backup testing to some extent.
+
+
+title=Add Hdfs Impl for the new file system interfac
+explanation=HADOOP-6223 adds a new file system interface (potentially called AbstractFileSystem).
+expected=Add an implementation for it for the HDFS file system.
+
+
+title=Add a bulk FIleSystem.getFileBlockLocations
+current=Currently map-reduce applications (specifically file-based input-formats) use <CODE> to compute splits. 
+current=However they are forced to call it once per file.
+benefit=The downsides are multiple:<LIST>
+expected=It would be nice to have a <CODE> which can take in a directory, and return the block-locations for all files in that directory. 
+expected=We could eliminate both the per-file RPC and also the 'search' by a 'scan'.
+benefit=When I tested this for terasort, a moderate job with 8000 input files the runtime halved from the current 8s to 4s. 
+benefit=Clearly this is much more important for latency-sensitive applications.
+
+
+title=Implementation of ReplicaPlacementPolicyNodeGroup to support 4-layer network topology
+explanation=A subclass of ReplicaPlacementPolicyDefault, ReplicaPlacementPolicyNodeGroup was developed along with unit tests to support the four-layer hierarchical topology.
+explanation=The replica placement strategy used in ReplicaPlacementPolicyNodeGroup virtualization is almost the same as the original one. 
+explanation=The differences are:<LIST>
+
+
+title=getCorruptFiles() should give some hint that the list is not complet
+current=If the list of corruptfiles returned by the namenode doesn't say anything if the number of corrupted files is larger than the call output limit (which means the list is not complete). 
+expected=There should be a way to hint incompleteness to clients.
+expected=A simple hack would be to add an extra entry to the array returned with the value null. 
+explanation=Clients could interpret this as a sign that there are other corrupt files in the system.
+expected=We should also do some rephrasing of the fsck output to make it more confident when the list is not complete and less confident when the list is known to be incomplete.
+
+
+title=When the client calls hsync, allows the client to update the file length in the NameNode
+expected=As per discussion in HDFS-3960<LINK> and HDFS-2802<LINK>, when clients that need strong consistency update the file length at the NameNode, a special sync/flush is required for getting the length of the being written files when snapshots are taken for these files. 
+explanation=This jira implements this sync-with-updating-length by <LIST> to indicate the length information.
+
+
+title=Add concat to HttpFS and WebHDFS REST API docs
+explanation=HDFS-3598<LINK> adds the concat feature to WebHDFS. 
+expected=The REST API should be updated accordingly.
+
+
+title=Namenode should have a favored nodes hint to enable clients to have control over block placement.
+explanation=Sometimes Clients like HBase are required to dynamically compute the datanodes it wishes to place the blocks for a file for higher level of locality. 
+expected=For this purpose there is a need of a way to give the Namenode a hint in terms of a favoredNodes parameter about the locations where the client wants to put each block. 
+explanation=The proposed solution is a favored nodes parameter in the addBlock() method and in the create() file method to enable the clients to give the hints to the NameNode about the locations of each replica of the block. 
+explanation=Note that this would be just a hint and finally the NameNode would look at disk usage, datanode load etc 
+explanation=and decide whether it can respect the hints or not.
+
+
+title=HDFS truncate
+expected=Systems with transaction support often need to undo changes made to the underlying storage when a transaction is aborted. 
+current=Currently HDFS does not support truncate (a standard Posix operation) which is a reverse operation of append, which makes upper layer applications use ugly workarounds (such as keeping track of the discarded byte range per file in a separate metadata store, and periodically running a vacuum process to rewrite compacted files) to overcome this limitation of HDFS
+
+
+title=WebHDFS: a complete FileSystem implementation for accessing HDFS over HTTP
+explanation=We current have hftp for accessing HDFS over HTTP. 
+current=However, hftp is a read-only FileSystem and does not provide "write" accesses.
+expected=In HDFS-2284, we propose to have WebHDFS for providing a complete FileSystem implementation for accessing HDFS over HTTP. 
+explanation=The is the umbrella JIRA for the tasks.
+
+
+title=Support for snapshots
+expected=Support HDFS snapshots. 
+expected=It should support creating snapshots without shutting down the file system. 
+explanation=Snapshot creation should be lightweight and a typical system should be able to support a few thousands concurrent snapshots. 
+explanation=There should be a way to surface (for example, mount) a few of these snapshots simultaneously.
+
+
+title=Datanode command for evicting writers
+expected=It will be useful if there is a command to evict writers from a datanode. 
+current=When a set of datanodes are being decommissioned, they can get blocked by slow writers at the end. 
+explanation=It was rare in the old days since mapred jobs didn't last too long, but with many different types of apps running on today's YARN cluster, we are often see very long tail in datanode decommissioning.
+expected=I propose a new dfsadmin command, evictWriters, to be added. 
+explanation=I initially thought about having namenode automatically telling datanodes on decommissioning, but realized that having a command is more flexible. 
+example=for example, users can choose not to do this at all, choose when to evict writers, or whether to try multiple times for whatever reasons.
+
+
+title=Create symbolic links in HDFS
+expected=HDFS should support symbolic links. 
+explanation=A symbolic link is a special type of file that contains a reference to another file or directory in the form of an absolute or relative path and that affects pathname resolution. 
+explanation=Programs which read or write to files named by a symbolic link will behave as if operating directly on the target file. 
+explanation=However, archiving utilities can handle symbolic links specially and manipulate them directly.
+
+
+title=Changes to balancer bandwidth should not require datanode restart.
+current=Currently in order to change the value of the balancer bandwidth (<CODE>), the datanode daemon must be restarted.
+explanation=The optimal value of the bandwidthPerSec parameter is not always (almost never) known at the time of cluster startup, but only once a new node is placed in the cluster and balancing is begun. 
+drawback=If the balancing is taking too long (bandwidthPerSec is too low) or the balancing is taking up too much bandwidth (bandwidthPerSec is too high), the cluster must go into a "maintenance window" where it is unusable while all of the datanodes are bounced. 
+drawback=In large clusters of thousands of nodes, this can be a real maintenance problem because these "mainenance windows" can take a long time and there may have to be several of them while the bandwidthPerSec is experimented with and tuned.
+expected=A possible solution to this problem would be to add a -bandwidth parameter to the balancer tool. 
+explanation=If bandwidth is supplied, pass the value to the datanodes via the OP_REPLACE_BLOCK and OP_COPY_BLOCK DataTransferProtocol requests. 
+explanation=This would make it necessary, however, to change the DataTransferProtocol version.
+
+
+title=Provide option to use the NFS Gateway without having to use the Hadoop portmapper
+current=In order to use the NFS Gateway on operating systems with the rpcbind privileged registration bug, we currently require users to shut down and discontinue use of the system-provided portmap daemon, and instead use the portmap daemon provided by Hadoop. 
+expected=Alternately, we can work around this bug if we tweak the NFS Gateway to perform its port registration from a privileged port, and still let users use the system portmap daemon.
+
+
+title=Add ability for safemode to wait for a minimum number of live datanodes
+explanation=When starting up a fresh cluster programatically, users often want to wait until DFS is "writable" before continuing in a script. 
+current="dfsadmin -safemode wait" doesn't quite work for this on a completely fresh cluster, since when there are 0 blocks on the system, 100% of them are accounted for before any DNs have reported.
+expected=This JIRA is to add a command which waits until a certain number of DNs have reported as alive to the NN.
+
+
+title=Support for options within the Datanode Transfer protocol
+expected=This proposal is to extend the DataNode Transfer protocol to support "options", in the spirit of IP or TCP options. 
+expected=This should make this protocol more extensible, allowing the client to include metadata along with commands. 
+benefit=This would support efforts to include end-to-end and causal tracing into Hadoop, and hopefully other efforts as well.
+expected=Options should have a type, and be of variable length. 
+expected=It should be possible to include multiple options along with each datanode command. 
+expected=The option should apply to both the command and any data that is part of the command. 
+expected=If the datanode does not understand a given option, it should ignore it. 
+expected=Options should be sent end-to-end through intermediate datanodes, if necessary. 
+example=For example, if an OP_WRITE_BLOCK command is pipelined through several machines, the options should be sent along the pipeline. 
+explanation=Nodes along the pipeline may modify the options.
+expected=BTW, If HADOOP-4005 (concrete datanode protocol) is implemented, then it should solve this problem by simply letting the user add state to the concrete protocol class.
+
+
+title=A stress-test tool for HDFS.
+expected=It would be good to have a tool for automatic stress testing HDFS, which would provide IO-intensive load on HDFS cluster.
+expected=The idea is to start the tool, let it run overnight, and then be able to analyze possible failures.
+
+
+title=Create target for 10 minute patch test build for hdfs
+expected=It would be good to identify a subset of hdfs tests that provide strong test code coverage within 10 minutes, as is the goal of MAPREDUCE-670 and HADOOP-5628.
+
+
+title=Support for RW/RO snapshots in HDFS
+explanation=Snapshots are point in time images of parts of the filesystem or the entire filesystem. 
+explanation=Snapshots can be a read-only or a read-write point in time copy of the filesystem. 
+explanation=There are several use cases for snapshots in HDFS. 
+explanation=I will post a detailed write-up soon with with more information.
+
+
+title=Enable support for heterogeneous storages in HDFS - DN as a collection of storages
+current=HDFS currently supports configuration where storages are a list of directories. 
+current=Typically each of these directories correspond to a volume with its own file system. 
+current=All these directories are homogeneous and therefore identified as a single storage at the namenode. 
+expected=I propose, change to the current model where Datanode * is a * storage, to Datanode * is a collection * of strorages.
+
+
+title=Erasure Coding Support inside HDFS
+benefit=Erasure Coding (EC) can greatly reduce the storage overhead without sacrifice of data reliability, comparing to the existing HDFS 3-replica approach. 
+example=For example, if we use a 10+4 Reed Solomon coding, we can allow loss of 4 blocks, with storage overhead only being 40%. 
+benefit=This makes EC a quite attractive alternative for big data storage, particularly for cold data.
+explanation=Facebook had a related open source project called HDFS-RAID. 
+explanation=It used to be one of the contribute packages in HDFS but had been removed since Hadoop 2.0 for maintain reason. 
+drawback=The drawbacks are: <LIST>. 
+explanation=Due to these, it might not be a good idea to just bring HDFS-RAID back.
+expected=We (Intel and Cloudera) are working on a design to build EC into HDFS that gets rid of any external dependencies, makes it self-contained and independently maintained. 
+explanation=This design lays the EC feature on the storage type support and considers compatible with existing HDFS features like caching, snapshot, encryption, high availability and etc. 
+explanation=This design will also support different EC coding schemes, implementations and policies for different deployment scenarios. 
+benefit=By utilizing advanced libraries (for example Intel ISA-L library), an implementation can greatly improve the performance of EC encoding/decoding and makes the EC solution even more attractive. 
+explanation=We will post the design document soon.
+
+
+title=Implementation of ACLs in HDFS
+current=Currenly hdfs doesn't support Extended file ACL. 
+explanation=In unix extended ACL can be achieved using getfacl and setfacl utilities. 
+expected=Is there anybody working on this feature ?
+
+
+title=Centralized cache management in HDFS
+current=HDFS currently has no support for managing or exposing in-memory caches at datanodes. 
+drawback=This makes it harder for higher level application frameworks like Hive, Pig, and Impala to effectively use cluster memory, because they cannot explicitly cache important datasets or place their tasks for memory locality.
+
+
+title=Support NFSv3 interface to HDFS
+current=Access HDFS is usually done through HDFS Client or webHDFS. 
+drawback=Lack of seamless integration with client’s file system makes it difficult for users and impossible for some applications to access HDFS. 
+explanation=NFS interface support is one way for HDFS to have such easy integration.
+expected=This JIRA is to track the NFS protocol support for accessing HDFS. 
+benefit=With HDFS client, webHDFS and the NFS interface, HDFS will be easier to access and be able support more applications and use cases.
+explanation=We will upload the design document and the initial implementation.
+
+
+title=getCorruptFiles() should give some hint that the list is not complete
+current=If the list of corruptfiles returned by the namenode doesn't say anything if the number of corrupted files is larger than the call output limit (which means the list is not complete). 
+expected=There should be a way to hint incompleteness to clients.
+expected=A simple hack would be to add an extra entry to the array returned with the value null. 
+explanation=Clients could interpret this as a sign that there are other corrupt files in the system.
+expected=We should also do some rephrasing of the fsck output to make it more confident when the list is not complete and less confident when the list is known to be incomplete.
+
+
+title=Maintain aggregated peer performance metrics on NameNode
+expected=The metrics collected in HDFS-10917 should be reported to and aggregated on NameNode as part of heart beat messages. 
+benefit=This will make is easy to expose it through JMX to users who are interested in them.
+
+title=Add MXBean methods to query NN's transaction information and JournalNode's journal status
+current=Currently NameNode already provides RPC calls to get its last applied transaction ID and most recent checkpoint's transaction ID. 
+expected=It can be helpful to provide support to enable querying these information through JMX, so that administrators and applications like Ambari can easily decide if a forced checkpoint by calling saveNamespace is necessary. 
+expected=Similarly we can add MxBean interface for JournalNodes to query the status of journals 
+example=for example, whether journals are formatted or not.
+
+
+title=CLI-based driver for MiniDFSCluster
+expected=Picking up a thread again from MAPREDUCE-987, I've found it very useful to have a CLI driver for running a single-process DFS cluster, particularly when developing features in HDFS clients. 
+example=For example, being able to spin up a local cluster easily was tremendously useful for correctness testing of HDFS-2834.
+explanation=I'd like to contribute a class based on the patch for MAPREDUCE-987 we've been using fairly extensively. 
+explanation=Only for DFS, not MR since much has changed MR-side since the original patch.
+
+
+title=Refactor INodeDirectory#getExistingPathINodes() to enable returning more than INode array
+current=Currently INodeDirectory#getExistingPathINodes() uses an INode array to return the INodes resolved from the given path. 
+expected=For snapshot we need the function to be able to return more information when resolving a path for a snapshot file/dir.
+
+
+title=Add a PowerTopology class to aid replica placement and enhance availability of blocks
+explanation=Power outages are a common reason for a DataNode to become unavailable. 
+expected=Having a data structure to represent to the power topology of your data center can be used to implement a power-aware replica placement policy.
+
+title=Make the HDFS home directory location customizable.
+current=The path is currently hardcoded:<CODE>
+expected=It would be nice to have that as a customizable value.
+useless=Thank you
+
+title=Add a default method body for the INodeAttributeProvider#checkPermissionWithContext API
+expected=The new API INodeAttributeProvider#checkPermissionWithContext() needs a default method body. 
+drawback=Otherwise old implementations fail to compile.
+
+title=Move ClientProtocol HA proxies into hadoop-hdfs-client
+explanation=Follow-up for HDFS-11431.
+expected=We should move this missing class over rather than pulling in the whole hadoop-hdfs dependency.
+
+title=Replication violates block placement policy.
+current=Recently we are noticing many cases in which all the replica of the block are residing on the same rack.
+current=During the block creation, the block placement policy was honored.
+current=But after node failure event in some specific manner, the block ends up in such state.
+explanation=On investigating more I found out that BlockManager#blockHasEnoughRacks is dependent on the config (net.topology.script.file.name)
+explanation=[CODE]
+explanation=We specify DNSToSwitchMapping implementation (our own custom implementation) via net.topology.node.switch.mapping.impl and no longer use net.topology.script.file.name config.
+class=bug-3-9083
+
+title=Setting permissions on name directory fails on non posix compliant filesystems
+current=Hi, HDFS NameNode and JournalNode are not starting in Windows machine. 
+current=Found below related exception in logs. 
+current=[TRACE]
+explanation=Code changes related to this issue: [URL]
+class=bug-4-14890
+
+title=Erasure coding system policy state is not correctly saved and loaded during real cluster restart
+current=Inspired by HDFS-12682, I found the system erasure coding policy state will not be correctly saved and loaded in a real cluster. 
+explanation=Through there are such kind of unit tests and all are passed with MiniCluster. 
+explanation=It's because the MiniCluster keeps the same static system erasure coding policy object after the NN restart operation.
+class=bug-5-12866
+
+title=Some blocks can be permanently lost if nodes are decommissioned while dead
+current=When all the nodes containing a replica of a block are decommissioned while they are dead, they get decommissioned right away even if there are missing blocks. 
+explanation=This behavior was introduced by HDFS-7374.
+explanation=The problem starts when those decommissioned nodes are brought back online. 
+explanation=The namenode no longer shows missing blocks, which creates a false sense of cluster health. 
+explanation=When the decommissioned nodes are removed and reformatted, the block data is permanently lost. 
+explanation=The namenode will report missing blocks after the heartbeat recheck interval (e.g. 10 minutes) from the moment the last node is taken down.
+explanation=There are multiple issues in the code. 
+explanation=As some cause different behaviors in testing vs. production, it took a while to reproduce it in a unit test. 
+explanation=I will present analysis and proposal soon.
+class=bug-6-11609
+
+title=Failed to load image from FSImageFile when downgrade from 3.x to 2.x
+explanation=After fixing HDFS-13596, try to downgrade from 3.x to 2.x. 
+current=But namenode can't start because exception occurs. 
+current=The message follows [TRACE]
+explanation=This issue occurs because 3.x namenode saves image with EC fields during upgrade
+useless=Try to fix it
+class=bug-7-14396
+
+title=balancer doesn't run as a daemon
+current=From HDFS-7184, minor issues with balancer
+current=daemon isn't set to true in hdfs to enable daemonization
+current=start-balancer script has usage instead of hadoop_usage
+class=bug-8-7204
+
+title=Compilation fails in branch-3.0
+current=HDFS branch-3.0 compilation fails.
+current=[TRACE]
+class=bug-9-14018
+
+title=Rebalancer sleeps too long between iterations
+current=Whilst reading the code to try and determine why I'm seeing bad performance I think I've spotted an inadvertent move of a sleep() to inside a for loop.
+current=This means that instead of sleeping once per iteration the balance is sleeping once per namenode per iteration. 
+explanation= If I've done my maths correctly the sleep time default is 18 seconds so this is a nice little speedup for HA clusters.
+class=bug-10-9761
+
+title=Creating a file with non-default EC policy in a EC zone is not correctly serialized in the editlog
+current=When create a replicated file in an existing EC zone, the edit logs does not differentiate it from an EC file. 
+current=When FSEditLogLoader to replay edits, this file is treated as EC file, as a results, it crashes the NN because the blocks of this file are replicated, which does not match with INode.
+current=[TRACE]
+class=bug-11-12840
+
+title=Unset EC policy logs empty payload in edit log
+current=The edit log generated by hdfs ec -unsetPolicy generates an OP_REMOVE_XATTR entry in edit logs, but the payload like xattr namespace / name / vaue are missing:[CODE]
+current=As a result, when Active NN restarts, or the Standby NN replay edits, this op has not effect.
+class=bug-12-12569
+
+title=Many EC tests fail in trunk
+current=Many EC tests are failing in pre-commit runs. e.g. [URL] [URL] [URL]
+drawback=This is creating a lot of noise in Jenkins runs outputs. 
+useless=We should either fix or disable these tests.
+class=bug-13-12408
+
+title=Do not require a storage ID or target storage IDs when writing a block
+current=Seems like HDFS-9807 broke backwards compatibility with Hadoop 2.x clients. 
+current=When talking to a 3.0.0-alpha4 DN with security on: [TRACE]
+class=bug-14-11956
+
+title=Do not require a storage ID or target storage IDs when writing a block
+current=Seems like HDFS-9807 broke backwards compatibility with Hadoop 2.x clients. 
+current=When talking to a 3.0.0-alpha4 DN with security on: [TRACE]
+class=bug-15-11956
+
+title=Intermittent deadlock in NameNode when failover happens.
+explanation=It is happening due to metrics getting updated at the same time when failover is happening. 
+useless=Please find attached jstack at that point of time.
+class=bug-16-11180
+
+title=DN always uses HTTP/localhost@REALM principals in SPNEGO
+current=In HDFS-7279 the Netty server in DN proxies all servlet requests to the local Jetty instance.
+current=The Jetty server is configured incorrectly so that it always uses HTTP/locahost@REALM to authenticate spnego requests. 
+drawback=As a result, servlets like JMX are no longer accessible in secure deployments.
+class=bug-17-8572
+
+title=Reserved RBW space is not released if creation of RBW File fails
+current=The DataNode reserves disk space for a full block when creating an RBW block and will release the space when the block is finalized (introduced in HDFS-6898)
+current=But if the RBW file creation fails, the reserved space is not released back.
+current=In a scenario, when the data node disk is full it causes no space left IOException. 
+current=Eventually even if the disk got cleaned, the reserved space is not release until the Data Node is restarted
+current=Stacktrace for block creation failure is: [TRACE]
+class=bug-18-8626
+
+title=Datanode in tests cannot start in Windows after HDFS-10638
+explanation=After HDFS-10638
+current=Starting datanode's in MiniDFSCluster in windows throws below exception [TRACE]
+class=bug-19-11098
+
+title=Download File from UI broken after pagination
+current=We have seen a standby namenode crashing due to edit log corruption. 
+explanation=It was complaining that OP_CLOSE cannot be applied because the file is not under-construction.
+explanation=When a client was trying to append to the file, the remaining space quota was very small. 
+current=This caused a failure in prepareFileForWrite(), but after the inode was already converted for writing and a lease added. 
+explanation=Since these were not undone when the quota violation was detected, the file was left in under-construction with an active lease without edit logging OP_ADD.
+current=A subsequent append() eventually caused a lease recovery after the soft limit period. 
+current=This resulted in commitBlockSynchronization(), which closed the file with OP_CLOSE being logged. 
+explanation=Since there was no corresponding OP_ADD, edit replaying could not apply this.
+class=bug-20-7587
+
+
+
+
